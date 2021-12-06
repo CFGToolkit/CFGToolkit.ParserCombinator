@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Marcin Gołębiowski</Authors>
+    <Company>CFGToolkit</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <Version>1.0.0-alpha-2</Version>
+  </PropertyGroup>
+
+</Project>
