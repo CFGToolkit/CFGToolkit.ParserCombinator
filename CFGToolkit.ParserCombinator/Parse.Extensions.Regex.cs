@@ -1,6 +1,5 @@
 ﻿using CFGToolkit.ParserCombinator.Parsers;
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CFGToolkit.ParserCombinator
@@ -10,10 +9,8 @@ namespace CFGToolkit.ParserCombinator
         public static IParser<CharToken, string> Regex(string pattern, RegexOptions options = RegexOptions.None)
         {
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
-            return ObjectCache.CacheGet("Regex", pattern, options, () =>
-            {
-                return RegexMatch("Pattern: " + pattern, new Regex(pattern, options));
-            });
+
+            return RegexMatch("Pattern: " + pattern, new Regex(pattern, options));
         }
 
         public static IParser<CharToken, string> RegexMatch(string pattern, RegexOptions options)
@@ -33,12 +30,10 @@ namespace CFGToolkit.ParserCombinator
         public static IParser<CharToken, string> RegexExt(string pattern, Func<string, bool> predicate)
         {
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
-            return ObjectCache.CacheGet("RegexExt", pattern, predicate, () =>
-            {
-                var regex = OptimizeRegex(new Regex(pattern));
 
-                return ParserFactory.CreateEventParser(new RegexParser("Pattern: " + pattern, regex, predicate));
-            });
+            var regex = OptimizeRegex(new Regex(pattern));
+
+            return ParserFactory.CreateEventParser(new RegexParser("Pattern: " + pattern, regex, predicate));
         }
 
         private static Regex OptimizeRegex(Regex regex)

@@ -9,10 +9,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return ObjectCache.CacheGet("Optional", parser, greedy, () =>
-            {
-                return ParserFactory.CreateEventParser(new OptionalParser<TToken, T>(parser, "Optional: (" + parser.Name + ")", greedy));
-            });
+            return ParserFactory.CreateEventParser(new OptionalParser<TToken, T>(parser, "Optional: (" + parser.Name + ")", greedy));
         }
     }
 }

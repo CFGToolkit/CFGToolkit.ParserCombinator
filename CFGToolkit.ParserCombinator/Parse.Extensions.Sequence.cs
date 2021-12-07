@@ -22,15 +22,13 @@
             if (parser == null) throw new ArgumentNullException(nameof(parser));
             if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
 
-            return ObjectCache.CacheGet($"DelimitedBy({minimumCount},{maximumCount})", parser, delimiter, () =>
-            {
-                return ParserFactory.CreateEventParser(from head in parser.Once()
-                                     from tail in
-                                         (from separator in delimiter
-                                          from item in parser
-                                          select item).Repeat(minimumCount - 1, maximumCount - 1)
-                                     select head.Concat(tail));
-            });
+
+            return ParserFactory.CreateEventParser(from head in parser.Once()
+                                                   from tail in
+                                                       (from separator in delimiter
+                                                        from item in parser
+                                                        select item).Repeat(minimumCount - 1, maximumCount - 1)
+                                                   select head.Concat(tail));
         }
 
         public static IParser<TToken, List<T>> Repeat<TToken, T>(this IParser<TToken, T> parser, int count, bool greedy = true) where TToken : IToken
@@ -42,12 +40,9 @@
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return ObjectCache.CacheGet($"Repeat({minimumCount},{maximumCount}, {greedy})", parser, () =>
-            {
-                string name = $"{ parser.Name } repeated " + (minimumCount.HasValue ? $" min = {minimumCount} " : " ") + (maximumCount.HasValue ? $" max = {maximumCount}" : "");
+            string name = $"{ parser.Name } repeated " + (minimumCount.HasValue ? $" min = {minimumCount} " : " ") + (maximumCount.HasValue ? $" max = {maximumCount}" : "");
 
-                return ParserFactory.CreateEventParser(new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy));
-            });
+            return ParserFactory.CreateEventParser(new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy));
         }
     }
 }
