@@ -21,13 +21,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
         {
-            var parsers = new List<IParser<TToken>>();
+            var parsers = new IParser<TToken>[parserFactories.Length];
             var nodes = new List<TreeNode<TToken>>[parserFactories.Length];
 
             for (var i = 0; i < parserFactories.Length; i++)
             {
                 var parser = parserFactories[i].Value;
-                parsers.Add(parser);
+                parsers[i] = parser;
                 nodes[i] = new List<TreeNode<TToken>>();
 
                 if (i == 0)
@@ -65,9 +65,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
 
             var resultValues = new List<IUnionResultValue<TToken>>();
-            foreach (var leaf in nodes[parsers.Count - 1])
+            foreach (var leaf in nodes[parsers.Length - 1])
             {
-                var paths = new TreeNode<TToken>[parsers.Count];
+                var paths = new TreeNode<TToken>[parsers.Length];
                 paths[paths.Length - 1] = leaf;
 
                 bool success = true;
