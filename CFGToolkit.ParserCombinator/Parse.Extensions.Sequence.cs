@@ -7,7 +7,7 @@
 
     partial class Parse
     {
-        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Func<IParser<TToken>>[] parserFactories) where TToken : IToken
+        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories) where TToken : IToken
         {
             return ParserFactory.CreateEventParser(new SequenceParser<TToken, TResult>(name, select, parserFactories));
         }

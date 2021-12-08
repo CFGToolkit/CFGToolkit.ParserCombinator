@@ -8,9 +8,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
     public class SequenceParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
         private readonly Func<(string valueParserName, object value)[], TResult> select;
-        private readonly Func<IParser<TToken>>[] parserFactories;
+        private readonly Lazy<IParser<TToken>>[] parserFactories;
 
-        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params Func<IParser<TToken>>[] parserFactories)
+        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories)
         {
             Name = name;
             this.select = select;
@@ -22,12 +22,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
         {
             var parsers = new List<IParser<TToken>>();
-            var nodes = new List<TreeNode<TToken>>();
+            var nodes = new List<TreeNode<TToken>>[parserFactories.Length];
 
             for (var i = 0; i < parserFactories.Length; i++)
             {
-                var parser = parserFactories[i]();
+                var parser = parserFactories[i].Value;
                 parsers.Add(parser);
+                nodes[i] = new List<TreeNode<TToken>>();
 
                 if (i == 0)
                 {
@@ -41,23 +42,22 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     {
                         foreach (IUnionResultValue<TToken> item in result.Values)
                         {
-                            nodes.Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item });
+                            nodes[0].Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item });
                         }
                     }
                 }
                 else
                 {
-                    var previousNodes = nodes.Where(node => (node.Depth == i - 1)).ToList();
-                    foreach (var node in previousNodes)
+                    foreach (var node in nodes[i - 1])
                     {
                         var tmp = parser.Parse(node.Value.Reminder, globalState, parserState.Call(parser, node.Value.Reminder));
                         foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
                         {
-                            nodes.Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });
+                            nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });
                         }
                     }
 
-                    if (!nodes.Any(v => v.Depth == i))
+                    if (!nodes[i].Any())
                     {
                         return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
                     }
@@ -65,7 +65,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
 
             var resultValues = new List<IUnionResultValue<TToken>>();
-            foreach (var leaf in nodes.Where(node => node.Depth == parsers.Count - 1))
+            foreach (var leaf in nodes[parsers.Count - 1])
             {
                 var paths = new TreeNode<TToken>[parsers.Count];
                 paths[paths.Length - 1] = leaf;

@@ -142,7 +142,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Sequence("Token: " + parser.Name, (args) => (T)args[1].value, () => WhiteSpaces(), () => parser, () => WhiteSpaces());
+            return Sequence("Token: " + parser.Name, (args) => (T)args[1].value, new Lazy<IParser<CharToken>>(() => WhiteSpaces()), new Lazy<IParser<CharToken>>(() => parser), new Lazy<IParser<CharToken>>(() => WhiteSpaces()));
         }
 
         public static IParser<CharToken, string> Text(this IParser<CharToken, List<char>> characters)
