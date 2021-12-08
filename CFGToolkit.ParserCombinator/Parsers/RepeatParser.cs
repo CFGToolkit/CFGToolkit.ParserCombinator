@@ -130,6 +130,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     {
                         list.Add(val);
                     }
+                    @value.ConsumedTokens += tmp.Value.ConsumedTokens;
                     tmp = tmp.Parent;
                 }
 
