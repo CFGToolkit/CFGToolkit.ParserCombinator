@@ -30,8 +30,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         ConsumedTokens = item.ConsumedTokens,
                         Reminder = item.Reminder,
                         Position = item.Position,
-                        WasSuccessful = true
-
                     });
                 }
                 return UnionResultFactory.Success<TToken, TBase>(this, values);

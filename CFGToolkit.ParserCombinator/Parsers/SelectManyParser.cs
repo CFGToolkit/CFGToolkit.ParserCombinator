@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -27,15 +26,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 var values = new List<IUnionResultValue<TToken>>();
                 var errorMessages = new List<string>();
-                foreach (var item in firstResult.Values.Where(v => v.WasSuccessful))
+                foreach (var item in firstResult.Values)
                 {
                     var secondParser = selector(item.GetValue<T>());
-
                     var secondParserResults = secondParser.Parse(item.Reminder, globalState, parseState.Call(secondParser, item.Reminder));
 
                     if (secondParserResults.WasSuccessful)
                     {
-                        foreach (var secondItem in secondParserResults.Values.Where(v => v.WasSuccessful))
+                        foreach (var secondItem in secondParserResults.Values)
                         {
                             values.Add(new UnionResultValue<TToken>(typeof(V))
                             {
@@ -52,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure<TToken, V>(this, firstResult.Values);
+                return UnionResultFactory.Failure<TToken, V>(this);
             }
         }
     }

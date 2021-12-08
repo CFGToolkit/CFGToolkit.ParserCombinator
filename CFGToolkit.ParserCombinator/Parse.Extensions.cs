@@ -36,7 +36,7 @@ namespace CFGToolkit.ParserCombinator
 
         public static IParser<CharToken, char> Chars(string c)
         {
-            return Char(c.ToEnumerable().Contains, "String: " + c);
+            return Char(c.Contains, "String: " + c);
         }
 
         public static IParser<CharToken, char> CharExcept(char c)
@@ -46,7 +46,7 @@ namespace CFGToolkit.ParserCombinator
 
         public static IParser<CharToken, char> CharExcept(string c)
         {
-            return CharExcept(c.ToEnumerable().Contains, "Except: " + c);
+            return CharExcept(c.Contains, "Except: " + c);
         }
 
         public static IParser<CharToken, char> AnyChar() 

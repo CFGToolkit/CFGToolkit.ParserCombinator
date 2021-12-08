@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CFGToolkit.ParserCombinator
 {
     public interface IUnionResultValue<TToken> where TToken : IToken
     {
-        bool WasSuccessful { get; set; }
-
         int Position { get; set;  }
 
         IInput<TToken> Reminder { get; set; }
@@ -26,7 +23,5 @@ namespace CFGToolkit.ParserCombinator
         T GetValue<T>();
 
         string Text { get; }
-
-        string ErrorMessage { get; set; }
     }
 }

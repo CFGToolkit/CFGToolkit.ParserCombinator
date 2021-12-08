@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -26,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 var values = new List<IUnionResultValue<TToken>>();
 
-                foreach (var item in firstResult.Values.Where(v => v.WasSuccessful))
+                foreach (var item in firstResult.Values)
                 {
                     var value = second(item.GetValue<T>());
                     values.Add(new UnionResultValue<TToken>(typeof(U))
@@ -35,7 +34,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Reminder = item.Reminder,
                         ConsumedTokens = item.ConsumedTokens,
                         Position = item.Position,
-                        WasSuccessful = true
                     });
                 }
                 return UnionResultFactory.Success(this, values);

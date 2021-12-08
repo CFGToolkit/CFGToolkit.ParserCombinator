@@ -17,7 +17,6 @@ namespace CFGToolkit.ParserCombinator
                         Position = position,
                         Reminder = remainder, 
                         ConsumedTokens = consumedTokens,
-                        WasSuccessful = true
                     }
                 },
             };
@@ -46,31 +45,23 @@ namespace CFGToolkit.ParserCombinator
             };
         }
 
-        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser, string errorMessage, IInput<TToken> reminder) where TToken : IToken
+        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser, string errorMessage, IInput<TToken> input) where TToken : IToken
+        {
+            return new UnionResult<TToken>(typeof(TResult))
+            {
+                Parser = parser,
+                ErrorMessage = errorMessage,
+                Input = input,
+                Values = new List<IUnionResultValue<TToken>>()
+            };
+        }
+
+        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser) where TToken : IToken
         {
             return new UnionResult<TToken>(typeof(TResult))
             {
                 Parser = parser,
                 Values = new List<IUnionResultValue<TToken>>()
-                {
-                    new UnionResultValue<TToken>(typeof(TResult))
-                    {
-                        Reminder = reminder,
-                        Position = reminder.Position,
-                        ErrorMessage = errorMessage,
-                        WasSuccessful = false
-                    }
-                },
-            };
-        }
-
-        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser, List<IUnionResultValue<TToken>> values) where TToken : IToken
-        {
-            values.ForEach(v => v.WasSuccessful = false);
-            return new UnionResult<TToken>(typeof(TResult))
-            {
-                Parser = parser,
-                Values = values,
             };
         }
     }

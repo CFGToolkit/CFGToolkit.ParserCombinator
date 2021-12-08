@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CFGToolkit.ParserCombinator
@@ -41,11 +40,7 @@ namespace CFGToolkit.ParserCombinator
             }
         }
 
-        public bool WasSuccessful { get; set; } = true;
-
         public Type ValueType { get; set; }
-
-        public string ErrorMessage { get; set; }
 
         public T GetValue<T>()
         {

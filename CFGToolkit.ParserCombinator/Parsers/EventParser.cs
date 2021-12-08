@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CFGToolkit.ParserCombinator.Parsers.Behaviors
 {
@@ -43,18 +44,21 @@ namespace CFGToolkit.ParserCombinator.Parsers.Behaviors
         {
             var result = Parser.Parse(input, state, parserState);
 
-            var afterArgs = new AfterParseArgs<TToken>()
+            if (AfterParse.Any())
             {
-                ParserResult = result,
-                GlobalState = state,
-                Input = input,
-                ParserState = parserState,
-            };
+                var afterArgs = new AfterParseArgs<TToken>()
+                {
+                    ParserResult = result,
+                    GlobalState = state,
+                    Input = input,
+                    ParserState = parserState,
+                };
 
-            foreach (var action in AfterParse)
-            {
-                action(afterArgs);
-            };
+                foreach (var action in AfterParse)
+                {
+                    action(afterArgs);
+                };
+            }
 
             return result;
         }

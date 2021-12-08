@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             if (results.WasSuccessful)
             {
                 var result = new List<IUnionResultValue<TToken>>();
-                var successValues = results.Values.Where(v => v.WasSuccessful);
+                var successValues = results.Values;
                 var optionValues = successValues
                     .Select(v => (IUnionResultValue<TToken>)new UnionResultValue<TToken>(typeof(IOption<T>))
                     {
@@ -48,21 +48,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 var result = new List<IUnionResultValue<TToken>>();
                 result.Add(new UnionResultValue<TToken>(typeof(IOption<T>))
                 {
-                    Reminder = input,
-                    ErrorMessage = $"{this.Name} failed",
-                    Position = input.Position,
-                    Value = default,
-                    WasSuccessful = false
-                });
-
-
-                result.Add(new UnionResultValue<TToken>(typeof(IOption<T>))
-                {
                     ConsumedTokens = 0,
                     Value = new None<T>(),
                     Reminder = input,
                     Position = input.Position,
-                    WasSuccessful = true
                 });
 
                 return UnionResultFactory.Success(this, result);

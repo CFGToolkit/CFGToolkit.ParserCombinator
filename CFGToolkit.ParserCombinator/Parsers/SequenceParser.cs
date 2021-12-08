@@ -35,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (!result.WasSuccessful)
                     {
-                        return UnionResultFactory.Failure(this, result.Values);
+                        return UnionResultFactory.Failure(this, $"Parser {parser} was not successful", input);
                     }
                     else
                     {
@@ -47,7 +47,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    var previousNodes = nodes.Where(node => (node.Depth == i - 1) && node.Value.WasSuccessful).ToList();
+                    var previousNodes = nodes.Where(node => (node.Depth == i - 1)).ToList();
                     foreach (var node in previousNodes)
                     {
                         var tmp = parser.Parse(node.Value.Reminder, globalState, parserState.Call(parser, node.Value.Reminder));
@@ -57,25 +57,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         }
                     }
 
-                    if (!nodes.Any(v => v.Depth == i && v.Value.WasSuccessful))
+                    if (!nodes.Any(v => v.Depth == i))
                     {
-                        var result = new List<IUnionResultValue<TToken>>();
-                        result.Add(new UnionResultValue<TToken>(typeof(TResult))
-                        {
-                            Reminder = input,
-                            ErrorMessage = $"{this.Name} failed",
-                            Position = input.Position,
-                            Value = default(TResult),
-                            WasSuccessful = false
-                        });
-
-                        return UnionResultFactory.Failure(this, result);
+                        return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
                     }
                 }
             }
 
             var resultValues = new List<IUnionResultValue<TToken>>();
-            foreach (var leaf in nodes.Where(node => node.Depth == parsers.Count - 1 && node.Value.WasSuccessful))
+            foreach (var leaf in nodes.Where(node => node.Depth == parsers.Count - 1))
             {
                 var paths = new TreeNode<TToken>[parsers.Count];
                 paths[paths.Length - 1] = leaf;
@@ -84,12 +74,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 for (var k = paths.Length - 2; k >= 0; k--)
                 {
                     paths[k] = paths[k + 1].Parent;
-
-                    if (!paths[k].Value.WasSuccessful)
-                    {
-                        success = false;
-                        break;
-                    }
                 }
 
                 if (success)

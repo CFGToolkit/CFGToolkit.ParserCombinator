@@ -48,7 +48,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, values);
+                    return UnionResultFactory.Failure(this);
                 }
             }
             else

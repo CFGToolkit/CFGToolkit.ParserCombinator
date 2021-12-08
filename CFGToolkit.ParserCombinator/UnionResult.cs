@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CFGToolkit.ParserCombinator
 {
@@ -29,12 +28,13 @@ namespace CFGToolkit.ParserCombinator
             get
             {
 
-                if (Values == null || !Values.Any()) return false;
+                if (Values == null || Values.Count == 0) return false;
 
-                return Values.Any(v => v.WasSuccessful);
+                return true;
             }
         }
 
         public IInput<TToken> Input { get; set; }
+        public string ErrorMessage { get; internal set; }
     }
 }

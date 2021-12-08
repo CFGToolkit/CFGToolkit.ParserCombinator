@@ -54,7 +54,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     var next = _parser.Parse(node.Value.Reminder, globalState, parserState.Call(_parser, node.Value.Reminder));
                     if (next.WasSuccessful)
                     {
-                        foreach (var item in next.Values.Where(v => v.WasSuccessful))
+                        foreach (var item in next.Values)
                         {
                             if (!item.EmptyMatch)
                             {

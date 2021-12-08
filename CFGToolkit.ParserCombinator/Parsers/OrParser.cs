@@ -42,17 +42,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 return UnionResultFactory.Success(this, secondResult);
             }
 
-            var resultFailures = new List<IUnionResultValue<TToken>>();
-            resultFailures.Add(new UnionResultValue<TToken>(typeof(TResult))
-            {
-                Reminder = input,
-                ErrorMessage = $"Both parsers failed: ({first.Name}) and ({second.Name})",
-                Position = input.Position,
-                Value = default(TResult),
-                WasSuccessful = false
-            });
-
-            return UnionResultFactory.Failure(this, resultFailures);
+            return UnionResultFactory.Failure(this, $"Both parsers failed: ({first.Name}) and ({second.Name})", input);
         }
     }
 }

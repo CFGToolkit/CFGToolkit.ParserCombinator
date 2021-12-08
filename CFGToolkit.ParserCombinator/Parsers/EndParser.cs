@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -29,7 +28,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
             }
 
-            return UnionResultFactory.Failure(this, result.Values);
+            return UnionResultFactory.Failure(this);
         }
     }
 }

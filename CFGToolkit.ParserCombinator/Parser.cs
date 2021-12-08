@@ -55,7 +55,7 @@ namespace CFGToolkit.ParserCombinator
 
             if (result.WasSuccessful)
             {
-                return result.Values.Where(v => v.WasSuccessful).Select(v => v.GetValue<TValue>()).ToList();
+                return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
 
             throw new ParseException("Failed to parse");

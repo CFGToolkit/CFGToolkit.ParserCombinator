@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 var values = new List<IUnionResultValue<TToken>>();
 
-                foreach (var item in result.Values.Cast<IUnionResultValue<TToken>>().Where(v => v.WasSuccessful))
+                foreach (var item in result.Values)
                 {
                     values.Add(new UnionResultValue<TToken>(typeof(List<TResult>))
                     {
