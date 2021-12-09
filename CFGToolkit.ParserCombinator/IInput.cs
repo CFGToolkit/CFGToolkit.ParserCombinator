@@ -6,7 +6,7 @@ namespace CFGToolkit.ParserCombinator
     public interface IInput<TToken> : IEquatable<IInput<TToken>> where TToken : IToken
     {
         IInput<TToken> Advance(int count = 1);
-        
+
         List<TToken> Source { get; }
 
         TToken Current { get; }

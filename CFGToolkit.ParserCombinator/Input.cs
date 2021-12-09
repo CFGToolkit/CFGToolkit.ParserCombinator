@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CFGToolkit.ParserCombinator
 {
@@ -30,12 +30,12 @@ namespace CFGToolkit.ParserCombinator
 
         public List<TToken> Source { get { return _source; } }
 
-        public TToken Current 
-        { 
-            get 
-            { 
-                return AtEnd ? default(TToken) : _source[_position]; 
-            } 
+        public TToken Current
+        {
+            get
+            {
+                return AtEnd ? default(TToken) : _source[_position];
+            }
         }
 
         public bool AtEnd { get { return _position == _source.Count; } }
@@ -87,7 +87,7 @@ namespace CFGToolkit.ParserCombinator
         {
             _text = text;
         }
-        
+
         public string SourceText
         {
             get

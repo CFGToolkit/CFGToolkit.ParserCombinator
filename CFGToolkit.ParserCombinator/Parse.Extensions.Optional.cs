@@ -1,5 +1,5 @@
-﻿using CFGToolkit.ParserCombinator.Parsers;
-using System;
+﻿using System;
+using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator
 {

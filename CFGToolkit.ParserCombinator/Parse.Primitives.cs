@@ -4,8 +4,8 @@
     {
         public static IParser<CharToken, string> LineEnd =
             (from r in Char('\r').Optional()
-            from n in Char('\n')
-            select !r.IsEmpty ? r.Get().ToString() + n : n.ToString())
+             from n in Char('\n')
+             select !r.IsEmpty ? r.Get().ToString() + n : n.ToString())
             .Named("LineEnd");
 
         public static IParser<CharToken, string> LineTerminator =

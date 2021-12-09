@@ -1,9 +1,9 @@
 ﻿namespace CFGToolkit.ParserCombinator
 {
-    using CFGToolkit.ParserCombinator.Parsers;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CFGToolkit.ParserCombinator.Parsers;
 
     partial class Parse
     {

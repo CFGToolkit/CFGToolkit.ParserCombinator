@@ -5,19 +5,19 @@ namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class OnceParser<TToken, TResult> : IParser<TToken, List<TResult>> where TToken : IToken
     {
-        private readonly IParser<TToken, TResult> parser;
+        private readonly IParser<TToken, TResult> _parser;
 
         public OnceParser(string name, IParser<TToken, TResult> parser)
         {
             Name = name;
-            this.parser = parser;
+            _parser = parser;
         }
 
         public string Name { get; set; }
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> state, IParserState<TToken> parserState)
         {
-            var result = parser.Parse(input, state, parserState.Call(parser, input));
+            var result = _parser.Parse(input, state, parserState.Call(_parser, input));
 
             if (result.WasSuccessful)
             {

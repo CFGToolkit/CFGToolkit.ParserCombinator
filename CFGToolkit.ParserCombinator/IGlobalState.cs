@@ -1,6 +1,6 @@
-﻿using CFGToolkit.ParserCombinator.Parsers.Behaviors;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Parsers.Behaviors;
 
 namespace CFGToolkit.ParserCombinator
 {

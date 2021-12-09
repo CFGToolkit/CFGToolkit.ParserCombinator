@@ -5,21 +5,21 @@ namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class ThenFuncParser<TToken, T, U> : IParser<TToken, U> where TToken : IToken
     {
-        private readonly IParser<TToken, T> first;
-        private readonly Func<T, U> second;
+        private readonly IParser<TToken, T> _first;
+        private readonly Func<T, U> _second;
 
         public ThenFuncParser(string name, IParser<TToken, T> first, Func<T, U> second)
         {
             Name = name;
-            this.first = first;
-            this.second = second;
+            _first = first;
+            _second = second;
         }
 
         public string Name { get; set; }
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
         {
-            var firstResult = first.Parse(input, globalState, parserState.Call(first, input));
+            var firstResult = _first.Parse(input, globalState, parserState.Call(_first, input));
 
             if (firstResult.WasSuccessful)
             {
@@ -27,7 +27,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 foreach (var item in firstResult.Values)
                 {
-                    var value = second(item.GetValue<T>());
+                    var value = _second(item.GetValue<T>());
                     values.Add(new UnionResultValue<TToken>(typeof(U))
                     {
                         Value = value,
@@ -40,7 +40,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, $"Parser {first} failed", input);
+                return UnionResultFactory.Failure(this, $"Parser {_first} failed", input);
             }
         }
     }

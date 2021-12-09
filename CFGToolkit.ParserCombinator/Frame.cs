@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace CFGToolkit.ParserCombinator
+﻿namespace CFGToolkit.ParserCombinator
 {
     public class Frame<TToken> where TToken : IToken
     {
         public Frame<TToken> Parent { get; set; }
 
         public IInput<TToken> Input { get; set; }
-
-        public int Position { get; set; }
 
         public IParser<TToken> Parser { get; set; }
 

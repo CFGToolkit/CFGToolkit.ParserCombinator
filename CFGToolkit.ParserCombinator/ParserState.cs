@@ -68,7 +68,7 @@ namespace CFGToolkit.ParserCombinator
 
         public ParserState<TToken> Call(IParser<TToken> parser, IInput<TToken> input)
         {
-            var frame = new Frame<TToken>() { Parser = parser, Position = input.Position, Input = input, Parent = Frame };
+            var frame = new Frame<TToken>() { Parser = parser, Input = input, Parent = Frame };
             return new ParserState<TToken>(frame) { Parent = this };
         }
     }

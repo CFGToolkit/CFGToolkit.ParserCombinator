@@ -6,7 +6,7 @@
 
         int EndIndex { get; set; }
 
-        string ToString(); 
+        string ToString();
     }
 
     public interface IToken<TValue> : IToken

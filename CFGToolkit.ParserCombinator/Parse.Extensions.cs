@@ -1,7 +1,7 @@
-﻿using CFGToolkit.ParserCombinator.Parsers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator
 {
@@ -41,7 +41,7 @@ namespace CFGToolkit.ParserCombinator
 
         public static IParser<CharToken, char> CharExcept(char c)
         {
-            return CharExcept(ch => c == ch, "Except : "+ c);
+            return CharExcept(ch => c == ch, "Except : " + c);
         }
 
         public static IParser<CharToken, char> CharExcept(string c)
@@ -49,13 +49,13 @@ namespace CFGToolkit.ParserCombinator
             return CharExcept(c.Contains, "Except: " + c);
         }
 
-        public static IParser<CharToken, char> AnyChar() 
+        public static IParser<CharToken, char> AnyChar()
         {
             return Char(c => true, "Any char");
         }
 
         public static readonly IParser<CharToken, char> WhiteSpace = Char(char.IsWhiteSpace, "Whitespace");
-    
+
         public static readonly IParser<CharToken, char> Digit = Char(char.IsDigit, "Digit");
 
         public static readonly IParser<CharToken, char> Letter = Char(char.IsLetter, "Letter");
@@ -197,7 +197,7 @@ namespace CFGToolkit.ParserCombinator
             return ParserFactory.CreateEventParser(new ReturnParser<TToken, T>(name, value));
         }
 
-        public static IParser<CharToken, T> Return<T>(T value) 
+        public static IParser<CharToken, T> Return<T>(T value)
         {
             return Return<CharToken, T>(value);
         }
@@ -232,7 +232,7 @@ namespace CFGToolkit.ParserCombinator
         public static IParser<TToken, T> End<TToken, T>(this IParser<TToken, T> parser) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
-         
+
             return ParserFactory.CreateEventParser(new EndParser<TToken, T>("End: " + parser.Name, parser));
         }
     }

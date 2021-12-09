@@ -1,6 +1,6 @@
-﻿using CFGToolkit.ParserCombinator.Parsers;
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
+using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator
 {

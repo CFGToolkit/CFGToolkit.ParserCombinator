@@ -5,25 +5,25 @@ namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class WhereParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
-        private readonly IParser<TToken, TResult> parser;
-        private readonly Func<TResult, bool> predicate;
+        private readonly IParser<TToken, TResult> _parser;
+        private readonly Func<TResult, bool> _predicate;
 
         public WhereParser(string name, IParser<TToken, TResult> parser, Func<TResult, bool> predicate)
         {
             Name = name;
-            this.parser = parser;
-            this.predicate = predicate;
+            _parser = parser;
+            _predicate = predicate;
         }
 
         public string Name { get; set; }
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
         {
-            var result = parser.Parse(input, globalState, parserState.Call(parser, input));
+            var result = _parser.Parse(input, globalState, parserState.Call(_parser, input));
 
             if (result.WasSuccessful)
             {
-                var filteredValues = result.Values.Where(i => predicate(i.GetValue<TResult>()));
+                var filteredValues = result.Values.Where(i => _predicate(i.GetValue<TResult>()));
 
                 if (filteredValues.Any())
                 {

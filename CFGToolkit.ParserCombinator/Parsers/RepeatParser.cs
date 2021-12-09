@@ -1,6 +1,6 @@
-﻿using CFGToolkit.ParserCombinator.Parsers.Graphs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Parsers.Graphs;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {

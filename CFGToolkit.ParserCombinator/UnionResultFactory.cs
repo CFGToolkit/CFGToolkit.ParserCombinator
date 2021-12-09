@@ -9,19 +9,19 @@ namespace CFGToolkit.ParserCombinator
             return new UnionResult<TToken>(typeof(TResult))
             {
                 Parser = parser,
-                Values = new List<IUnionResultValue<TToken>> 
-                { 
+                Values = new List<IUnionResultValue<TToken>>
+                {
                     new UnionResultValue<TToken>(typeof(TResult))
-                    { 
+                    {
                         Value = value,
                         Position = position,
-                        Reminder = remainder, 
+                        Reminder = remainder,
                         ConsumedTokens = consumedTokens,
                     }
                 },
             };
         }
-        
+
         public static UnionResult<CharToken> Success<TResult>(TResult value, IInput<CharToken> remainder, IParser<CharToken, TResult> parser, int position, int consumedTokens)
         {
             return Success<CharToken, TResult>(value, remainder, parser, position, consumedTokens);

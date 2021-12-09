@@ -1,32 +1,32 @@
-﻿using CFGToolkit.ParserCombinator.Parsers.Graphs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Parsers.Graphs;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class SequenceParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
-        private readonly Func<(string valueParserName, object value)[], TResult> select;
-        private readonly Lazy<IParser<TToken>>[] parserFactories;
+        private readonly Func<(string valueParserName, object value)[], TResult> _factory;
+        private readonly Lazy<IParser<TToken>>[] _parserFactories;
 
         public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories)
         {
             Name = name;
-            this.select = select;
-            this.parserFactories = parserFactories;
+            _factory = select;
+            _parserFactories = parserFactories;
         }
 
         public string Name { get; set; }
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
         {
-            var parsers = new IParser<TToken>[parserFactories.Length];
-            var nodes = new List<TreeNode<TToken>>[parserFactories.Length];
+            var parsers = new IParser<TToken>[_parserFactories.Length];
+            var nodes = new List<TreeNode<TToken>>[_parserFactories.Length];
 
-            for (var i = 0; i < parserFactories.Length; i++)
+            for (var i = 0; i < _parserFactories.Length; i++)
             {
-                var parser = parserFactories[i].Value;
+                var parser = _parserFactories[i].Value;
                 parsers[i] = parser;
                 nodes[i] = new List<TreeNode<TToken>>();
 
@@ -83,7 +83,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     int i = 0;
                     var args = paths.Select(pathObject => (parsers[i++].Name, pathObject.Value.Value)).ToArray();
-                    value.Value = select(args);
+                    value.Value = _factory(args);
                     value.ConsumedTokens = paths.Sum(path => (path.Value).ConsumedTokens);
                     value.Position = paths.First().Value.Position;
                     resultValues.Add(value);

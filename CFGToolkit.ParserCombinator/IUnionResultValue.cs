@@ -4,7 +4,7 @@ namespace CFGToolkit.ParserCombinator
 {
     public interface IUnionResultValue<TToken> where TToken : IToken
     {
-        int Position { get; set;  }
+        int Position { get; set; }
 
         IInput<TToken> Reminder { get; set; }
 

@@ -1,17 +1,15 @@
-﻿using System.Linq;
-
-namespace CFGToolkit.ParserCombinator.Parsers
+﻿namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class StringParser : IParser<CharToken, string>
     {
-        private readonly string @string;
-        private readonly bool token;
+        private readonly string _string;
+        private readonly bool _token;
 
         public StringParser(string name, string @string, bool token = false)
         {
             Name = name;
-            this.@string = @string;
-            this.token = token;
+            _string = @string;
+            _token = token;
         }
 
         public string Name { get; set; }
@@ -21,7 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             var current = input;
             int count = 0;
 
-            if (token)
+            if (_token)
             {
                 for (; ; )
                 {
@@ -42,7 +40,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                 }
             }
-            foreach (var @char in @string)
+            foreach (var @char in _string)
             {
                 if (!current.AtEnd && current.Current.Value == @char)
                 {
@@ -51,11 +49,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, "Failed to match string: " + @string, input);
+                    return UnionResultFactory.Failure(this, "Failed to match string: " + _string, input);
                 }
             }
 
-            if (token)
+            if (_token)
             {
                 for (; ; )
                 {
@@ -76,13 +74,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                 }
             }
-            if (count == @string.Length)
+            if (count == _string.Length)
             {
-                return UnionResultFactory.Success(@string, current, this, position: input.Position, consumedTokens: current.Position - input.Position);
+                return UnionResultFactory.Success(_string, current, this, position: input.Position, consumedTokens: current.Position - input.Position);
             }
             else
             {
-                return UnionResultFactory.Failure(this, "Failed to match string: " + @string, input);
+                return UnionResultFactory.Failure(this, "Failed to match string: " + _string, input);
             }
         }
     }
