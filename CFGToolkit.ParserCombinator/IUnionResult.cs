@@ -8,9 +8,9 @@ namespace CFGToolkit.ParserCombinator
 
         IGlobalState<TToken> State { get; set; }
 
-        List<IUnionResultValue<TToken>> Values { get; }
+        List<IUnionResultValue<TToken>> Values { get; set; }
 
-        IParser<TToken> Parser { get; }
+        IParser<TToken> Parser { get; set; }
 
         IInput<TToken> Input { get; set; }
     }
