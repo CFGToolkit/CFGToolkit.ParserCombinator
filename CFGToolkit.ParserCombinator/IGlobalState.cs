@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Parsers.Behaviors;
+using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator
 {

@@ -8,6 +8,8 @@
 
         public char Value { get; set; }
 
+        public string Text { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
         public override string ToString()
         {
             return Value.ToString();

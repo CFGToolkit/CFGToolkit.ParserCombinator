@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace CFGToolkit.ParserCombinator
 {
@@ -21,7 +22,18 @@ namespace CFGToolkit.ParserCombinator
         int ConsumedTokens { get; set; }
 
         T GetValue<T>();
+    }
 
-        string Text { get; }
+    public static class IUnionResultValueExtensions
+    {
+        public static string Text(this IUnionResultValue<CharToken> value)
+        {
+            if (value.EmptyMatch)
+            {
+                return string.Empty;
+            }
+
+            return new string(value.Reminder.Source.Skip(value.Position).Take(value.ConsumedTokens).Select(token => token.Value).ToArray());
+        }
     }
 }

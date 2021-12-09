@@ -6,7 +6,6 @@ namespace CFGToolkit.ParserCombinator
 
     public class UnionResultValue<TToken> : IUnionResultValue<TToken> where TToken : IToken
     {
-        private string _txt;
 
         public UnionResultValue(Type valueType)
         {
@@ -22,23 +21,6 @@ namespace CFGToolkit.ParserCombinator
         public object Value { get; set; }
 
         public IInput<TToken> Reminder { get; set; }
-
-        public string Text
-        {
-            get
-            {
-                if (EmptyMatch)
-                {
-                    return string.Empty;
-                }
-
-                if (_txt == null)
-                {
-                    _txt = string.Join(string.Empty, Reminder.Source.Skip(Position).Take(ConsumedTokens).Select(token => token.ToString()));
-                }
-                return _txt;
-            }
-        }
 
         public Type ValueType { get; set; }
 
