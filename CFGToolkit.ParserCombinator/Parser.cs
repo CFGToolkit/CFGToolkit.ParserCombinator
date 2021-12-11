@@ -58,7 +58,7 @@ namespace CFGToolkit.ParserCombinator
                 return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
 
-            throw new ParseException("Failed to parse");
+            throw new ParseException("Failed to parse. Last consumed position: " + result.State.LastConsumedCallStack);
         }
     }
 }
