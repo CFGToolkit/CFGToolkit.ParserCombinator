@@ -11,6 +11,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Parser = parser;
         }
 
+        public List<Action<BeforeArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeArgs<TToken>>>();
+
         public List<Action<AfterParseArgs<TToken>>> AfterParse { get; } = new List<Action<AfterParseArgs<TToken>>>();
 
         public string Name
@@ -29,6 +31,21 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> state, IParserState<TToken> parserState)
         {
+            if (BeforeParse.Any())
+            {
+                var beforeArgs = new BeforeArgs<TToken>()
+                {
+                    GlobalState = state,
+                    Input = input,
+                    ParserState = parserState,
+                };
+
+                foreach (var action in BeforeParse)
+                {
+                    action(beforeArgs);
+                };
+            }
+
             var result = Parser.Parse(input, state, parserState);
 
             if (AfterParse.Any())

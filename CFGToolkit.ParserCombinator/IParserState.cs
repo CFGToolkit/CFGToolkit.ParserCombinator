@@ -14,7 +14,7 @@ namespace CFGToolkit.ParserCombinator
 
         ParserState<TToken> Parent { get; set; }
 
-        bool HasParser(string parserName, int depth = int.MaxValue);
+        bool HasParser(string parserName, int depth);
 
         ParserState<TToken> Call(IParser<TToken> parser, IInput<TToken> input);
     }

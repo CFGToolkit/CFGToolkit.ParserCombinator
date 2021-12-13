@@ -47,7 +47,7 @@ namespace CFGToolkit.ParserCombinator
 
         public ParserState<TToken> Parent { get; set; }
 
-        public bool HasParser(string parserName, int depth = int.MaxValue)
+        public bool HasParser(string parserName, int depth)
         {
             var tmp = this;
             int currentDepth = 0;

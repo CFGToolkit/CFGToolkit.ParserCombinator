@@ -9,6 +9,11 @@ namespace CFGToolkit.ParserCombinator
         public GlobalState()
         {
         }
+        
+        public Dictionary<IParser<TToken>, List<Action<BeforeArgs<TToken>>>> BeforeParseActions
+        {
+            get; set;
+        }
 
         public Dictionary<IParser<TToken>, List<Action<AfterParseArgs<TToken>>>> AfterParseActions
         {

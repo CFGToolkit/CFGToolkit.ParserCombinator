@@ -10,6 +10,19 @@ namespace CFGToolkit.ParserCombinator
         {
             var events = new EventParser<TToken, TResult>(parser);
 
+            events.BeforeParse.Add(new Action<BeforeArgs<TToken>>((args) =>
+            {
+                var actions = args.GlobalState.BeforeParseActions;
+
+                if (actions?.ContainsKey(events) ?? false)
+                {
+                    foreach (var action in actions[events])
+                    {
+                        action(args);
+                    }
+                }
+            }));
+
             events.AfterParse.Add(new Action<AfterParseArgs<TToken>>((args) =>
             {
                 var actions = args.GlobalState.AfterParseActions;
