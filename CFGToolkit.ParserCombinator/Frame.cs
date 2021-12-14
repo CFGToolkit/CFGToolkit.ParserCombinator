@@ -8,6 +8,8 @@
 
         public IParser<TToken> Parser { get; set; }
 
+        public IUnionResult<TToken> Result { get; set; }
+
         public override string ToString()
         {
             return Parser.Name;

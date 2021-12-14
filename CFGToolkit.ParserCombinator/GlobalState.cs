@@ -15,7 +15,7 @@ namespace CFGToolkit.ParserCombinator
             get; set;
         }
 
-        public Dictionary<IParser<TToken>, List<Action<AfterParseArgs<TToken>>>> AfterParseActions
+        public Dictionary<IParser<TToken>, List<Action<AfterArgs<TToken>>>> AfterParseActions
         {
             get; set;
         }

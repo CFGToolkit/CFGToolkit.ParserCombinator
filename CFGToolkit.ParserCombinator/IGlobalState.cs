@@ -8,7 +8,7 @@ namespace CFGToolkit.ParserCombinator
     {
         Dictionary<IParser<TToken>, List<Action<BeforeArgs<TToken>>>> BeforeParseActions { get; set; }
 
-        Dictionary<IParser<TToken>, List<Action<AfterParseArgs<TToken>>>> AfterParseActions { get; set; }
+        Dictionary<IParser<TToken>, List<Action<AfterArgs<TToken>>>> AfterParseActions { get; set; }
 
         int LastConsumedPosition { get; set; }
 

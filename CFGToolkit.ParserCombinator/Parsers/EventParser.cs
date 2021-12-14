@@ -13,7 +13,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public List<Action<BeforeArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeArgs<TToken>>>();
 
-        public List<Action<AfterParseArgs<TToken>>> AfterParse { get; } = new List<Action<AfterParseArgs<TToken>>>();
+        public List<Action<AfterArgs<TToken>>> AfterParse { get; } = new List<Action<AfterArgs<TToken>>>();
 
         public string Name
         {
@@ -50,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (AfterParse.Any())
             {
-                var afterArgs = new AfterParseArgs<TToken>()
+                var afterArgs = new AfterArgs<TToken>()
                 {
                     ParserResult = result,
                     GlobalState = state,

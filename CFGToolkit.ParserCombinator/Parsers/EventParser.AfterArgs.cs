@@ -1,6 +1,6 @@
 ﻿namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class AfterParseArgs<TToken> where TToken : IToken
+    public class AfterArgs<TToken> where TToken : IToken
     {
         public IUnionResult<TToken> ParserResult { get; set; }
 

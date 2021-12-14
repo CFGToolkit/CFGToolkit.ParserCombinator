@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator
                 }
             }));
 
-            events.AfterParse.Add(new Action<AfterParseArgs<TToken>>((args) =>
+            events.AfterParse.Add(new Action<AfterArgs<TToken>>((args) =>
             {
                 var actions = args.GlobalState.AfterParseActions;
 
@@ -40,7 +40,8 @@ namespace CFGToolkit.ParserCombinator
 
                 if (args.ParserResult.WasSuccessful)
                 {
-                    var consumedPosition = args.Input.Position + args.ParserResult.Values.Max(v => v.ConsumedTokens) - 1;
+                    var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
+                    var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
                     if (consumedPosition > args.GlobalState.LastConsumedPosition)
                     {
                         args.GlobalState.LastConsumedPosition = consumedPosition;
@@ -55,6 +56,7 @@ namespace CFGToolkit.ParserCombinator
                         args.GlobalState.LastFailedParser = args.ParserState.Frame.Parser;
                     }
                 }
+                args.ParserState.Frame.Result = args.ParserResult;
             }));
 
             return events;
