@@ -32,13 +32,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IParser<TToken, TResult> Parser { get; }
 
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> state, IParserCallStack<TToken> parserCallStack)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             if (BeforeParse.Any())
             {
                 var beforeArgs = new BeforeArgs<TToken>()
                 {
-                    GlobalState = state,
+                    GlobalState = globalState,
                     Input = input,
                     ParserCallStack = parserCallStack,
                 };
@@ -49,14 +49,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 };
             }
 
-            var result = Parser.Parse(input, state, parserCallStack);
+            var result = Parser.Parse(input, globalState, parserCallStack);
 
             if (AfterParse.Any())
             {
                 var afterArgs = new AfterArgs<TToken>()
                 {
                     ParserResult = result,
-                    GlobalState = state,
+                    GlobalState = globalState,
                     Input = input,
                     ParserCallStack = parserCallStack,
                 };

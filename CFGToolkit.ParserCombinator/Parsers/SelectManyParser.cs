@@ -28,7 +28,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
             if (firstResult.WasSuccessful)
             {
                 var values = new List<IUnionResultValue<TToken>>();
-                var errorMessages = new List<string>();
                 foreach (var item in firstResult.Values)
                 {
                     var secondParser = _selector(item.GetValue<T>());

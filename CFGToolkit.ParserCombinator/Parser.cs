@@ -32,11 +32,11 @@ namespace CFGToolkit.ParserCombinator
             {
                 state = new GlobalState<CharToken>();
             }
-            var inputObject = new InputStream(tokens);
-            var parserCallStack = new ParserCallStack<CharToken>(new Frame<CharToken>() { Parser = parser, Input = inputObject });
-            var result = parser.Parse(inputObject, state, parserCallStack);
-            result.State = state;
-            result.Input = inputObject;
+            var inputStream = new InputStream(tokens);
+            var parserCallStack = new ParserCallStack<CharToken>(new Frame<CharToken>() { Parser = parser, Input = inputStream });
+            var result = parser.Parse(inputStream, state, parserCallStack);
+            result.GlobalState = state;
+            result.Input = inputStream;
             return result;
         }
 
@@ -61,7 +61,7 @@ namespace CFGToolkit.ParserCombinator
                 return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
 
-            throw new ParserException("Failed to parse. Last consumed position: " + result.State.LastConsumedPosition);
+            throw new ParserException("Failed to parse. Last consumed position: " + result.GlobalState.LastConsumedPosition);
         }
     }
 }

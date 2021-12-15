@@ -89,7 +89,7 @@ parameter_identifier2[no-token] ::= identifier
         {
             var result = Parser.Parse(ALetters, "a");
 
-            Assert.Equal(1, result[0].ToList().Count);
+            Assert.Single(result[0].ToList());
         }
 
         [Fact]

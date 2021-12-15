@@ -19,10 +19,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> state, IParserCallStack<TToken> parserCallStack)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _left.Parse(input, state, parserCallStack.Call(_left, input));
-            var secondResult = _right.Parse(input, state, parserCallStack.Call(_left, input));
+            var firstResult = _left.Parse(input, globalState, parserCallStack.Call(_left, input));
+            var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_left, input));
 
             if (firstResult.WasSuccessful && secondResult.WasSuccessful)
             {

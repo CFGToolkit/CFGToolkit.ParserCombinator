@@ -8,7 +8,7 @@ namespace CFGToolkit.ParserCombinator.Values
     {
         public bool WasSuccessful { get; }
 
-        IGlobalState<TToken> State { get; set; }
+        IGlobalState<TToken> GlobalState { get; set; }
 
         List<IUnionResultValue<TToken>> Values { get; set; }
 

@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator.Values
 
         public IParser<TToken> Parser { get; set; }
 
-        public IGlobalState<TToken> State { get; set; }
+        public IGlobalState<TToken> GlobalState { get; set; }
 
         public bool WasSuccessful
         {
