@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
-    <Version>1.0.0-alpha-5</Version>
+    <Version>1.0.0-alpha-6</Version>
   </PropertyGroup>
 
   <ItemGroup>
