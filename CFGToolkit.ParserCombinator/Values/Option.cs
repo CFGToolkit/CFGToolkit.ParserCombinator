@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Values
 {
     public interface IOption<out T>
     {
@@ -22,7 +22,7 @@ namespace CFGToolkit.ParserCombinator
 
         public T GetOrDefault()
         {
-            return IsEmpty ? default(T) : Get();
+            return IsEmpty ? default : Get();
         }
 
         public abstract T Get();

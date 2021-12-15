@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -18,18 +21,20 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _first.Parse(input, globalState, parserState.Call(_first, input));
+            var firstResult = _first.Parse(input, globalState, parserCallStack.Call(_first, input));
 
             if (firstResult.WasSuccessful)
             {
+                IParser<TToken, U> secondParser = null;
+
                 var values = new List<IUnionResultValue<TToken>>();
                 foreach (var item in firstResult.Values)
                 {
-                    var secondParser = _second(item.GetValue<T>());
+                    secondParser = _second(item.GetValue<T>());
 
-                    var tmp = secondParser.Parse(item.Reminder, globalState, parserState);
+                    var tmp = secondParser.Parse(item.Reminder, globalState, parserCallStack);
 
                     if (tmp.WasSuccessful)
                     {
@@ -48,12 +53,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this);
+                    return UnionResultFactory.Failure(this, $"Parser {secondParser?.Name} failed in {Name} parser", input);
                 }
             }
             else
             {
-                return UnionResultFactory.Failure(this, $"Parser {_first} failed", input);
+                return UnionResultFactory.Failure(this, $"Parser {_first} failed in {Name} parser", input);
             }
         }
     }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Values
 {
     public interface IUnionResult<TToken> where TToken : IToken
     {
@@ -12,6 +14,6 @@ namespace CFGToolkit.ParserCombinator
 
         IParser<TToken> Parser { get; set; }
 
-        IInput<TToken> Input { get; set; }
+        IInputStream<TToken> Input { get; set; }
     }
 }

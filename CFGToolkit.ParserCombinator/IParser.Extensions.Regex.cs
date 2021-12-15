@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator
 {
-    partial class Parse
+    public partial class Parser
     {
         public static IParser<CharToken, string> Regex(string pattern, RegexOptions options = RegexOptions.None)
         {
@@ -24,7 +25,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (regex == null) throw new ArgumentNullException(nameof(regex));
             regex = OptimizeRegex(regex);
-            return ParserFactory.CreateEventParser(new RegexParser(name, regex, (value) => true));
+            return Weaver.Create(new RegexParser(name, regex, (value) => true));
         }
 
         public static IParser<CharToken, string> RegexExt(string pattern, Func<string, bool> predicate)
@@ -33,7 +34,7 @@ namespace CFGToolkit.ParserCombinator
 
             var regex = OptimizeRegex(new Regex(pattern));
 
-            return ParserFactory.CreateEventParser(new RegexParser("Pattern: " + pattern, regex, predicate));
+            return Weaver.Create(new RegexParser("Pattern: " + pattern, regex, predicate));
         }
 
         private static Regex OptimizeRegex(Regex regex)

@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -16,7 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public TResult Value { get; }
 
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             return UnionResultFactory.Success(Value, input, this, position: input.Position, consumedTokens: 0);
         }
@@ -37,9 +40,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public U Value { get; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var result = _parser.Parse(input, globalState, parserState.Call(_parser, input));
+            var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
             if (result.WasSuccessful)
             {

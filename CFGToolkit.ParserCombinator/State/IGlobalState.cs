@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.State
 {
     public interface IGlobalState<TToken> where TToken : IToken
     {

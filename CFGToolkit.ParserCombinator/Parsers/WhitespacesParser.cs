@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -11,7 +14,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<CharToken> Parse(IInput<CharToken> input, IGlobalState<CharToken> globalState, IParserState<CharToken> parserState)
+        public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
             var current = input;
             for (; ; )

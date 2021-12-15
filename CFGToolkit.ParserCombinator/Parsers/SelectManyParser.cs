@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -18,9 +21,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parseState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _parser.Parse(input, globalState, parseState.Call(_parser, input));
+            var firstResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
             if (firstResult.WasSuccessful)
             {
@@ -29,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 foreach (var item in firstResult.Values)
                 {
                     var secondParser = _selector(item.GetValue<T>());
-                    var secondParserResults = secondParser.Parse(item.Reminder, globalState, parseState.Call(secondParser, item.Reminder));
+                    var secondParserResults = secondParser.Parse(item.Reminder, globalState, parserCallStack.Call(secondParser, item.Reminder));
 
                     if (secondParserResults.WasSuccessful)
                     {
@@ -50,7 +53,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure<TToken, V>(this);
+                return UnionResultFactory.Failure<TToken, V>(this, $"Parser {_parser.Name} failed in {Name} parser.", input);
             }
         }
     }

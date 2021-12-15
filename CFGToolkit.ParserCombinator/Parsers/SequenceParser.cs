@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -19,7 +22,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var parsers = new IParser<TToken>[_parserFactories.Length];
             var nodes = new List<TreeNode<TToken>>[_parserFactories.Length];
@@ -32,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 if (i == 0)
                 {
-                    var result = parser.Parse(input, globalState, parserState);
+                    var result = parser.Parse(input, globalState, parserCallStack);
 
                     if (!result.WasSuccessful)
                     {
@@ -50,7 +53,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     foreach (var node in nodes[i - 1])
                     {
-                        var tmp = parser.Parse(node.Value.Reminder, globalState, parserState.Call(parser, node.Value.Reminder));
+                        var tmp = parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(parser, node.Value.Reminder));
                         foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
                         {
                             nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });

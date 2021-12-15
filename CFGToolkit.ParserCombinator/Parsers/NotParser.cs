@@ -1,4 +1,8 @@
-﻿namespace CFGToolkit.ParserCombinator.Parsers
+﻿using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
+
+namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class NotParser<TToken> : IParser<TToken, object> where TToken : IToken
     {
@@ -12,9 +16,9 @@
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var result = _parser.Parse(input, globalState, parserState.Call(_parser, input));
+            var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
             if (result.WasSuccessful)
             {

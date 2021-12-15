@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -22,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var nodes = new List<TreeNode<TToken>>();
             nodes.Add(
@@ -51,7 +54,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 foreach (var node in nodesToProcess.ToList())
                 {
-                    var next = _parser.Parse(node.Value.Reminder, globalState, parserState.Call(_parser, node.Value.Reminder));
+                    var next = _parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(_parser, node.Value.Reminder));
                     if (next.WasSuccessful)
                     {
                         foreach (var item in next.Values)

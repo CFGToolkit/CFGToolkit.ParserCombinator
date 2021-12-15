@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Values
 {
 
     public class UnionResult<TToken> : IUnionResult<TToken> where TToken : IToken
@@ -34,7 +36,7 @@ namespace CFGToolkit.ParserCombinator
             }
         }
 
-        public IInput<TToken> Input { get; set; }
+        public IInputStream<TToken> Input { get; set; }
         public string ErrorMessage { get; internal set; }
     }
 }

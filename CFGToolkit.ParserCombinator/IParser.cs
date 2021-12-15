@@ -1,10 +1,14 @@
-﻿namespace CFGToolkit.ParserCombinator
+﻿using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
+
+namespace CFGToolkit.ParserCombinator
 {
     public interface IParser<TToken> where TToken : IToken
     {
         string Name { get; set; }
 
-        IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState);
+        IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack);
     }
 
     public interface IParser<TToken, TResult> : IParser<TToken> where TToken : IToken

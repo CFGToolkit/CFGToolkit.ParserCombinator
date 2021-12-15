@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Weavers
 {
-    public class ParserFactory
+    public class EventParserWeaver : IParserWeaver
     {
-        public static IParser<TToken, TResult> CreateEventParser<TToken, TResult>(IParser<TToken, TResult> parser) where TToken : IToken
+        public IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser) where TToken : IToken
         {
             var events = new EventParser<TToken, TResult>(parser);
 
@@ -45,7 +46,7 @@ namespace CFGToolkit.ParserCombinator
                     if (consumedPosition > args.GlobalState.LastConsumedPosition)
                     {
                         args.GlobalState.LastConsumedPosition = consumedPosition;
-                        args.GlobalState.LastConsumedCallStack = args.ParserState.FullCallStack;
+                        args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
                     }
                 }
                 else
@@ -53,10 +54,10 @@ namespace CFGToolkit.ParserCombinator
                     if (args.Input.Position > args.GlobalState.LastFailedPosition)
                     {
                         args.GlobalState.LastFailedPosition = args.Input.Position;
-                        args.GlobalState.LastFailedParser = args.ParserState.Frame.Parser;
+                        args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
                     }
                 }
-                args.ParserState.Frame.Result = args.ParserResult;
+                args.ParserCallStack.Top.Result = args.ParserResult;
             }));
 
             return events;

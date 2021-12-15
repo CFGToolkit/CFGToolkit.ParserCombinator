@@ -1,6 +1,8 @@
-﻿namespace CFGToolkit.ParserCombinator
+﻿using CFGToolkit.ParserCombinator.Input;
+
+namespace CFGToolkit.ParserCombinator
 {
-    partial class Parse
+    public partial class Parser
     {
         public static IParser<CharToken, string> LineEnd =
             (from r in Char('\r').Optional()

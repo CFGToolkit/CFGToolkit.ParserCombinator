@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -18,9 +21,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public bool Greedy { get; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var results = _current.Parse(input, globalState, parserState.Call(_current, input));
+            var results = _current.Parse(input, globalState, parserCallStack.Call(_current, input));
 
             if (results.WasSuccessful)
             {

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator
 {
-    public static class Parser
+    public static partial class Parser
     {
         public static IUnionResult<CharToken> TryParse<TValue>(this IParser<CharToken, TValue> parser, string input, GlobalState<CharToken> parState = null)
         {
@@ -29,9 +32,9 @@ namespace CFGToolkit.ParserCombinator
             {
                 state = new GlobalState<CharToken>();
             }
-            var inputObject = new Input(tokens);
-            var parserState = new ParserState<CharToken>(new Frame<CharToken>() { Parser = parser, Input = inputObject }) { Name = "Root parser state" };
-            var result = parser.Parse(inputObject, state, parserState);
+            var inputObject = new InputStream(tokens);
+            var parserCallStack = new ParserCallStack<CharToken>(new Frame<CharToken>() { Parser = parser, Input = inputObject });
+            var result = parser.Parse(inputObject, state, parserCallStack);
             result.State = state;
             result.Input = inputObject;
             return result;
@@ -58,7 +61,7 @@ namespace CFGToolkit.ParserCombinator
                 return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
 
-            throw new ParseException("Failed to parse. Last consumed position: " + result.State.LastConsumedPosition);
+            throw new ParserException("Failed to parse. Last consumed position: " + result.State.LastConsumedPosition);
         }
     }
 }

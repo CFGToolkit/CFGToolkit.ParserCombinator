@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -16,10 +19,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> state, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> state, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _left.Parse(input, state, parserState.Call(_left, input));
-            var secondResult = _right.Parse(input, state, parserState.Call(_left, input));
+            var firstResult = _left.Parse(input, state, parserCallStack.Call(_left, input));
+            var secondResult = _right.Parse(input, state, parserCallStack.Call(_left, input));
 
             if (firstResult.WasSuccessful && secondResult.WasSuccessful)
             {

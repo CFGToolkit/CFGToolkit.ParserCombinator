@@ -1,4 +1,4 @@
-﻿namespace CFGToolkit.ParserCombinator
+﻿namespace CFGToolkit.ParserCombinator.Input
 {
     public class CharToken : IToken<char>
     {

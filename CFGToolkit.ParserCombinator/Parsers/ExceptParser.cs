@@ -1,4 +1,8 @@
-﻿namespace CFGToolkit.ParserCombinator.Parsers
+﻿using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
+
+namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class ExceptParser<TToken, T, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
@@ -14,14 +18,14 @@
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var result = _except.Parse(input, globalState, parserState.Call(_except, input));
+            var result = _except.Parse(input, globalState, parserCallStack.Call(_except, input));
             if (result.WasSuccessful)
             {
                 return UnionResultFactory.Failure(this, "Unexpected success of parser: " + this, input);
             }
-            return _current.Parse(input, globalState, parserState);
+            return _current.Parse(input, globalState, parserCallStack);
         }
     }
 }

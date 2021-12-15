@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -29,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IParser<TToken, TResult> Parser { get; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> state, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> state, IParserCallStack<TToken> parserCallStack)
         {
             if (BeforeParse.Any())
             {
@@ -37,7 +40,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     GlobalState = state,
                     Input = input,
-                    ParserState = parserState,
+                    ParserCallStack = parserCallStack,
                 };
 
                 foreach (var action in BeforeParse)
@@ -46,7 +49,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 };
             }
 
-            var result = Parser.Parse(input, state, parserState);
+            var result = Parser.Parse(input, state, parserCallStack);
 
             if (AfterParse.Any())
             {
@@ -55,7 +58,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     ParserResult = result,
                     GlobalState = state,
                     Input = input,
-                    ParserState = parserState,
+                    ParserCallStack = parserCallStack,
                 };
 
                 foreach (var action in AfterParse)

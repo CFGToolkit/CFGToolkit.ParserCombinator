@@ -1,4 +1,7 @@
-﻿namespace CFGToolkit.ParserCombinator.Parsers.Graphs
+﻿using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.Values;
+
+namespace CFGToolkit.ParserCombinator.Parsers.Graphs
 {
     public class TreeNode<TToken> where TToken : IToken
     {

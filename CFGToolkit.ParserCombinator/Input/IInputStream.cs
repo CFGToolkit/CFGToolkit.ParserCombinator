@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Input
 {
-    public interface IInput<TToken> : IEquatable<IInput<TToken>> where TToken : IToken
+    public interface IInputStream<TToken> : IEquatable<IInputStream<TToken>> where TToken : IToken
     {
-        IInput<TToken> Advance(int count = 1);
+        IInputStream<TToken> Advance(int count = 1);
 
         List<TToken> Source { get; }
 

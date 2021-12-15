@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Linq;
+using CFGToolkit.ParserCombinator;
+using CFGToolkit.ParserCombinator.Input;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Values
 {
     public interface IUnionResultValue<TToken> where TToken : IToken
     {
         int Position { get; set; }
 
-        IInput<TToken> Reminder { get; set; }
+        IInputStream<TToken> Reminder { get; set; }
 
         bool EmptyMatch { get; }
 

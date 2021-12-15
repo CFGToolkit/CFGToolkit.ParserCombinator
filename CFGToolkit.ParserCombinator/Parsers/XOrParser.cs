@@ -1,4 +1,8 @@
-﻿namespace CFGToolkit.ParserCombinator.Parsers
+﻿using CFGToolkit.ParserCombinator.Input;
+using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
+
+namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class XOrParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
@@ -14,16 +18,16 @@
 
         public string Name { get; set; }
 
-        public IUnionResult<TToken> Parse(IInput<TToken> input, IGlobalState<TToken> globalState, IParserState<TToken> parserState)
+        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _left.Parse(input, globalState, parserState.Call(_left, input));
+            var firstResult = _left.Parse(input, globalState, parserCallStack.Call(_left, input));
 
             if (firstResult.WasSuccessful)
             {
                 return UnionResultFactory.Success(this, firstResult);
             }
 
-            var secondResult = _right.Parse(input, globalState, parserState.Call(_right, input));
+            var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_right, input));
 
             if (secondResult.WasSuccessful)
             {

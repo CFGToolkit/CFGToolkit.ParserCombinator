@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.State
 {
     public class GlobalState<TToken> : IGlobalState<TToken> where TToken : IToken
     {
         public GlobalState()
         {
         }
-        
+
         public Dictionary<IParser<TToken>, List<Action<BeforeArgs<TToken>>>> BeforeParseActions
         {
             get; set;

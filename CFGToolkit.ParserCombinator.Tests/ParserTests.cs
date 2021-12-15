@@ -1,3 +1,4 @@
+using CFGToolkit.ParserCombinator.Input;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -5,34 +6,34 @@ using Xunit;
 
 namespace CFGToolkit.ParserCombinator.Tests
 {
-    public class ParseTests
+    public class ParserTests
     {
         private static IParser<CharToken, string> Comment =>
-               from _1 in Parse.String("//").Text()
-               from _2 in Parse.AnyChar().Except(Parse.LineEnd).Many().Text()
-               from lines in Parse.LineEnd.Token().Many()
+               from _1 in Parser.String("//").Text()
+               from _2 in Parser.AnyChar().Except(Parser.LineEnd).Many().Text()
+               from lines in Parser.LineEnd.Token().Many()
                select _1 + _2 + string.Join("", lines);
 
         private static IParser<CharToken, string> String =>
-              from str in Parse.Regex("\"((?:\\\\.|[^\\\"])*)\"").Token()
+              from str in Parser.Regex("\"((?:\\\\.|[^\\\"])*)\"").Token()
               select str;
 
         private static IParser<CharToken, string> ProductionAttribute =
-                from start in Parse.Char('[')
-                from name in Parse.AnyChar().Except(Parse.Char(']')).Many().Text()
-                from end in Parse.Char(']')
+                from start in Parser.Char('[')
+                from name in Parser.AnyChar().Except(Parser.Char(']')).Many().Text()
+                from end in Parser.Char(']')
                 select name;
 
-        private static IParser<CharToken, string> Identifier = Parse.Regex(@"[$A-Z_a-z][\-0-9A-Z_a-z]*");
+        private static IParser<CharToken, string> Identifier = Parser.Regex(@"[$A-Z_a-z][\-0-9A-Z_a-z]*");
 
         private static IParser<CharToken, string> Production =
             from name in Identifier
             from attributes in ProductionAttribute.Many()
-            from spaces1 in Parse.WhiteSpace.Many()
-            from equal in Parse.String("::=")
-            from spaces2 in Parse.WhiteSpace.Many()
-            from body in Parse.Regex("[^ ]((?!(\r?\n){2}).)+", RegexOptions.Singleline)
-            from lines in Parse.LineEnd.Many()
+            from spaces1 in Parser.WhiteSpace.Many()
+            from equal in Parser.String("::=")
+            from spaces2 in Parser.WhiteSpace.Many()
+            from body in Parser.Regex("[^ ]((?!(\r?\n){2}).)+", RegexOptions.Singleline)
+            from lines in Parser.LineEnd.Many()
             select name;
 
         public static IParser<CharToken, string> Statement =
@@ -44,7 +45,7 @@ namespace CFGToolkit.ParserCombinator.Tests
             select _x1.AsEnumerable();
 
 
-        private static IParser<CharToken, IEnumerable<char>> ALetters = Parse.DelimitedBy(Parse.Char('a').Token(), Parse.String("|"), 1, null);
+        private static IParser<CharToken, IEnumerable<char>> ALetters = Parser.DelimitedBy(Parser.Char('a').Token(), Parser.String("|"), 1, null);
 
         [Fact]
         public void ProductionTest()
@@ -135,11 +136,11 @@ parameter_identifier2[no-token] ::= identifier
         public void ModuleKeywords()
         {
             var parser =
-                (from _0 in Parse.String("module", true).Text()
+                (from _0 in Parser.String("module", true).Text()
                  select _0)
-            .Or((from _0 in Parse.String("macromodule", true).Text()
+            .Or((from _0 in Parser.String("macromodule", true).Text()
                  select _0)
-            .Or((from _0 in Parse.String("connectmodule", true).Text()
+            .Or((from _0 in Parser.String("connectmodule", true).Text()
                  select _0)));
 
             var result = Parser.TryParse(parser, "    module    ");
@@ -151,8 +152,8 @@ parameter_identifier2[no-token] ::= identifier
         public void OptionalTest()
         {
             var parser =
-                from _0 in Parse.String("module", true).Text()
-                from _1 in Parse.String("aaa").Optional()
+                from _0 in Parser.String("module", true).Text()
+                from _1 in Parser.String("aaa").Optional()
                 select _0;
             var result = Parser.TryParse(parser, "    module    ");
 
@@ -163,9 +164,9 @@ parameter_identifier2[no-token] ::= identifier
         public void TokenTest()
         {
             var parser =
-                from _0 in Parse.Regex("R")
-                from _1 in Parse.Char('*', true)
-                from _2 in Parse.String("bbb")
+                from _0 in Parser.Regex("R")
+                from _1 in Parser.Char('*', true)
+                from _2 in Parser.String("bbb")
                 select _0;
 
             var result = Parser.TryParse(parser.End(), "R * bbb");
@@ -177,8 +178,8 @@ parameter_identifier2[no-token] ::= identifier
         public void Optional2Test()
         {
             var parser =
-                from _0 in Parse.String("aaa").Optional()
-                from _1 in Parse.String("aaa")
+                from _0 in Parser.String("aaa").Optional()
+                from _1 in Parser.String("aaa")
                 select _1;
             var result = Parser.TryParse(parser, "aaa");
 
@@ -189,10 +190,10 @@ parameter_identifier2[no-token] ::= identifier
         public void ProblematicGrammar()
         {
             var parser =
-                (from x in Parse.String("a")
+                (from x in Parser.String("a")
                  select x)
                 .Or(
-                    from x in Parse.String("ab")
+                    from x in Parser.String("ab")
                     select x
                 ).Many();
 
@@ -204,7 +205,7 @@ parameter_identifier2[no-token] ::= identifier
             var thirdResult = result[2].ToList();
 
             var parser2 = from x in parser
-                          from y in Parse.String("x")
+                          from y in Parser.String("x")
                           select "test";
 
             var result2 = Parser.Parse(parser2, "ababx");

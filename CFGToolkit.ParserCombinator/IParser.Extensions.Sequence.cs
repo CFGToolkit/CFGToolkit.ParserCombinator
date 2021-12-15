@@ -3,13 +3,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CFGToolkit.ParserCombinator.Input;
     using CFGToolkit.ParserCombinator.Parsers;
 
-    partial class Parse
+    public partial class Parser
     {
         public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories) where TToken : IToken
         {
-            return ParserFactory.CreateEventParser(new SequenceParser<TToken, TResult>(name, select, parserFactories));
+            return Weaver.Create(new SequenceParser<TToken, TResult>(name, select, parserFactories));
         }
 
         public static IParser<TToken, IEnumerable<T>> DelimitedBy<TToken, T, U>(this IParser<TToken, T> parser, IParser<TToken, U> delimiter) where TToken : IToken
@@ -23,7 +24,7 @@
             if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
 
 
-            return ParserFactory.CreateEventParser(from head in parser.Once()
+            return Weaver.Create(from head in parser.Once()
                                                    from tail in
                                                        (from separator in delimiter
                                                         from item in parser
@@ -42,7 +43,7 @@
 
             string name = $"{ parser.Name } repeated " + (minimumCount.HasValue ? $" min = {minimumCount} " : " ") + (maximumCount.HasValue ? $" max = {maximumCount}" : "");
 
-            return ParserFactory.CreateEventParser(new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy));
+            return Weaver.Create(new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy));
         }
     }
 }

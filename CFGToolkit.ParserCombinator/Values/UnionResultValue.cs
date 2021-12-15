@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
 
-namespace CFGToolkit.ParserCombinator
+namespace CFGToolkit.ParserCombinator.Values
 {
-
     public class UnionResultValue<TToken> : IUnionResultValue<TToken> where TToken : IToken
     {
-
         public UnionResultValue(Type valueType)
         {
             ValueType = valueType;
         }
 
-        public bool EmptyMatch { get { return this.ConsumedTokens == 0; } }
+        public bool EmptyMatch { get { return ConsumedTokens == 0; } }
 
         public int ConsumedTokens { get; set; }
 
@@ -20,13 +18,13 @@ namespace CFGToolkit.ParserCombinator
 
         public object Value { get; set; }
 
-        public IInput<TToken> Reminder { get; set; }
+        public IInputStream<TToken> Reminder { get; set; }
 
         public Type ValueType { get; set; }
 
         public T GetValue<T>()
         {
-            if (Value == null) return default(T);
+            if (Value == null) return default;
 
             return (T)Value;
         }
