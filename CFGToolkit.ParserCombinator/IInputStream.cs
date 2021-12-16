@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
 
-namespace CFGToolkit.ParserCombinator.Input
+namespace CFGToolkit.ParserCombinator
 {
     public interface IInputStream<TToken> : IEquatable<IInputStream<TToken>> where TToken : IToken
     {

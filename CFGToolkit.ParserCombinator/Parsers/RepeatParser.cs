@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CFGToolkit.ParserCombinator;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
 using CFGToolkit.ParserCombinator.State;

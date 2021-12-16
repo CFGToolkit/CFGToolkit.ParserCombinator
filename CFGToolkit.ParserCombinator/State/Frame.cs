@@ -1,5 +1,4 @@
 ﻿using CFGToolkit.ParserCombinator.Input;
-using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.State
 {

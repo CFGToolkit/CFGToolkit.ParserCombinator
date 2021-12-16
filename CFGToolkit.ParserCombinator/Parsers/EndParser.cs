@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using CFGToolkit.ParserCombinator;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
