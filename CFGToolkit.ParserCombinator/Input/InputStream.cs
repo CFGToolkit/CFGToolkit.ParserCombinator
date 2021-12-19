@@ -21,7 +21,7 @@ namespace CFGToolkit.ParserCombinator.Input
             if (_position + count > _source.Count)
                 throw new InvalidOperationException("The input is already at the end of the source.");
 
-            return new InputStream<TToken>(_source, _position + count);
+            return new InputStream<TToken>(_source, _position + count) { Attributes = Attributes };
         }
 
         public virtual IInputStream<TToken> Clone()
