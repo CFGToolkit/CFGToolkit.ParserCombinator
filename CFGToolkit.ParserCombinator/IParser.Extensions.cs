@@ -19,6 +19,14 @@ namespace CFGToolkit.ParserCombinator
             return Weaver.Create(new ExceptParser<TToken, T, TResult>(name, parser, except));
         }
 
+        public static IParser<TToken, TResult> Token<TToken, TResult>(string name, Predicate<TToken> predicate, Func<TToken, TResult> factory) where TToken : IToken
+        {
+            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
+
+            name = "Token: " + name;
+            return Weaver.Create(new TokenParser<TToken, TResult>(name, predicate, factory));
+        }
+
         public static IParser<CharToken, char> Char(Predicate<char> predicate, string description, bool token = false)
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));

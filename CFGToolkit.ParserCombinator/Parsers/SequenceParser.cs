@@ -36,7 +36,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 if (i == 0)
                 {
-                    var result = parser.Parse(input, globalState, parserCallStack);
+                    var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
 
                     if (!result.WasSuccessful)
                     {

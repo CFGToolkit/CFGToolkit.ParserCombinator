@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             if (!input.AtEnd)
             {
                 var remainder = input;
-                Match match = _regex.Match(((InputStream)input).SourceText, input.Position);
+                Match match = _regex.Match(input.GetText(), input.Position);
 
                 if (match.Success)
                 {

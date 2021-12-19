@@ -8,6 +8,8 @@ namespace CFGToolkit.ParserCombinator
     {
         IInputStream<TToken> Advance(int count = 1);
 
+        Dictionary<string, object> Attributes { get; set; }
+
         List<TToken> Source { get; }
 
         TToken Current { get; }

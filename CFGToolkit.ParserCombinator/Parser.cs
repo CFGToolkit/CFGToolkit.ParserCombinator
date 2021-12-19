@@ -14,26 +14,26 @@ namespace CFGToolkit.ParserCombinator
             var tokens = new List<CharToken>();
             for (var i = 0; i < input.Length; i++)
             {
-                tokens.Add(new CharToken() { StartIndex = i, EndIndex = i, Value = input[i] });
+                tokens.Add(new CharToken() { Position = i, Value = input[i] });
             }
             return TryParse(parser, tokens, parState);
         }
 
-        public static IUnionResult<CharToken> TryParse<TValue>(this IParser<CharToken, TValue> parser, List<CharToken> tokens, GlobalState<CharToken> parState = null)
+        public static IUnionResult<TToken> TryParse<TToken, TValue>(this IParser<TToken, TValue> parser, List<TToken> tokens, GlobalState<TToken> parState = null) where TToken: IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            GlobalState<CharToken> state = null;
+            GlobalState<TToken> state = null;
             if (parState != null)
             {
                 state = parState;
             }
             else
             {
-                state = new GlobalState<CharToken>();
+                state = new GlobalState<TToken>();
             }
-            var inputStream = new InputStream(tokens);
-            var parserCallStack = new ParserCallStack<CharToken>(new Frame<CharToken>() { Parser = parser, Input = inputStream });
+            var inputStream = new InputStream<TToken>(tokens, 0);
+            var parserCallStack = new ParserCallStack<TToken>(new Frame<TToken>() { Parser = parser, Input = inputStream });
             var result = parser.Parse(inputStream, state, parserCallStack);
             result.GlobalState = state;
             result.Input = inputStream;
@@ -45,7 +45,7 @@ namespace CFGToolkit.ParserCombinator
             var tokens = new List<CharToken>();
             for (var i = 0; i < input.Length; i++)
             {
-                tokens.Add(new CharToken() { StartIndex = i, EndIndex = i, Value = input[i] });
+                tokens.Add(new CharToken() { Position = i, Value = input[i] });
             }
             return Parse(parser, tokens);
         }

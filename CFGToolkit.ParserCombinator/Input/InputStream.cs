@@ -29,6 +29,8 @@ namespace CFGToolkit.ParserCombinator.Input
             return new InputStream<TToken>(_source, _position);
         }
 
+        public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
+
         public List<TToken> Source { get { return _source; } }
 
         public TToken Current
@@ -79,54 +81,16 @@ namespace CFGToolkit.ParserCombinator.Input
         }
     }
 
-    public class InputStream : InputStream<CharToken>
+    public static class InputStreamExtensions
     {
-        private string _text = null;
-        private string _currentText = null;
-
-        public InputStream(List<CharToken> source, int position = 0, string text = null) : base(source, position)
+        public static string GetText(this IInputStream<CharToken> stream)
         {
-            _text = text;
-        }
-
-        public string SourceText
-        {
-            get
+            if (!stream.Attributes.ContainsKey("txt"))
             {
-
-                if (_text == null)
-                {
-                    _text = string.Join(string.Empty, Source.Select(t => t.Value));
-                }
-
-                return _text;
+                stream.Attributes["txt"] = string.Join(string.Empty, stream.Source.Select(t => t.Value));
             }
-        }
 
-        public string CurrentText
-        {
-            get
-            {
-                if (_currentText == null)
-                {
-                    _currentText = string.Join(string.Empty, Source.Skip(Position).Select(t => t.Value));
-                }
-
-                return _currentText;
-            }
-        }
-
-        public override IInputStream<CharToken> Advance(int count)
-        {
-            if (Position + count > Source.Count)
-                throw new InvalidOperationException("Too far");
-
-            return new InputStream(Source, Position + count, _text);
-        }
-
-        public override IInputStream<CharToken> Clone()
-        {
-            return new InputStream(Source, Position, _text);
+            return stream.Attributes["txt"].ToString();
         }
     }
 }
