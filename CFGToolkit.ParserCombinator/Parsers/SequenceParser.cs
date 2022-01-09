@@ -55,9 +55,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     foreach (var node in nodes[i - 1])
                     {
                         var tmp = parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(parser, node.Value.Reminder));
-                        foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
+                        if (tmp.Values != null)
                         {
-                            nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });
+                            foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
+                            {
+                                nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });
+                            }
                         }
                     }
 

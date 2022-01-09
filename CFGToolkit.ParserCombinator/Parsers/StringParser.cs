@@ -25,25 +25,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                for (; ; )
-                {
-                    if (current.AtEnd)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        if (char.IsWhiteSpace(current.Current.Value))
-                        {
-                            current = current.Advance();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
             }
+
             foreach (var @char in _string)
             {
                 if (!current.AtEnd && current.Current.Value == @char)
@@ -59,25 +43,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                for (; ; )
-                {
-                    if (current.AtEnd)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        if (char.IsWhiteSpace(current.Current.Value))
-                        {
-                            current = current.Advance();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
             }
+
             if (count == _string.Length)
             {
                 return UnionResultFactory.Success(_string, current, this, position: input.Position, consumedTokens: current.Position - input.Position);

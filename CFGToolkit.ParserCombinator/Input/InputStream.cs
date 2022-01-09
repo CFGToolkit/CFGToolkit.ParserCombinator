@@ -8,7 +8,7 @@ namespace CFGToolkit.ParserCombinator.Input
     public class InputStream<TToken> : IInputStream<TToken> where TToken : IToken
     {
         private readonly List<TToken> _source;
-        private readonly int _position;
+        private int _position;
 
         public InputStream(List<TToken> source, int position)
         {
@@ -24,9 +24,25 @@ namespace CFGToolkit.ParserCombinator.Input
             return new InputStream<TToken>(_source, _position + count) { Attributes = Attributes };
         }
 
+        public IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate)
+        {
+            var clone = Clone();
+
+            while (clone.Position < clone.Source.Count)
+            {
+                if (!predicate(clone.Current))
+                {
+                    break;
+                }
+                clone.Position++;
+            }
+
+            return clone;
+        }
+
         public virtual IInputStream<TToken> Clone()
         {
-            return new InputStream<TToken>(_source, _position);
+            return new InputStream<TToken>(_source, _position) { Attributes = Attributes };
         }
 
         public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
@@ -43,7 +59,7 @@ namespace CFGToolkit.ParserCombinator.Input
 
         public bool AtEnd { get { return _position == _source.Count; } }
 
-        public int Position { get { return _position; } }
+        public int Position { get { return _position; } set { _position = value; } }
 
         public override int GetHashCode()
         {

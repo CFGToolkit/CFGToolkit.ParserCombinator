@@ -66,6 +66,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 };
             }
 
+
             return result;
         }
     }
