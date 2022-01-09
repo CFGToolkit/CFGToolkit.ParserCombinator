@@ -53,7 +53,7 @@ namespace CFGToolkit.ParserCombinator.Values
                 Parser = parser,
                 ErrorMessage = errorMessage,
                 Input = input,
-                Values = new List<IUnionResultValue<TToken>>()
+                Values = null
             };
         }
     }
