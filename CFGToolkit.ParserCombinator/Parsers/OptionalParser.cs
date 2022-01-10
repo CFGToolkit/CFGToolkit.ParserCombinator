@@ -37,7 +37,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Position = v.Position,
                         ConsumedTokens = v.ConsumedTokens,
                         Reminder = v.Reminder,
-                    }).ToList();
+                    });
 
                 if (!Greedy && !successValues.Any(item => item.ConsumedTokens == 0))
                 {

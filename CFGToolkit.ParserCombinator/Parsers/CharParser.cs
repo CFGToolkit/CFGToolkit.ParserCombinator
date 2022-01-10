@@ -27,7 +27,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
             }
 
             char c = '0';
@@ -47,7 +47,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), false);
             }
 
             return UnionResultFactory.Success(c, current, this, position: input.Position, consumedTokens: current.Position - input.Position);

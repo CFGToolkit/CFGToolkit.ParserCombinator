@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
@@ -33,6 +34,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
+            Stopwatch watch = null;
+
+            if (Telemetry.Enabled)
+            {
+                Telemetry.IncreaseCall(Name);
+                watch.Start();
+            }
+
             if (BeforeParse.Any())
             {
                 var beforeArgs = new BeforeArgs<TToken>()
@@ -66,7 +75,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 };
             }
 
-
+            if (Telemetry.Enabled)
+            {
+                watch.Stop();
+                Telemetry.IncreaseTime(Name, watch.ElapsedMilliseconds);
+            }
             return result;
         }
     }

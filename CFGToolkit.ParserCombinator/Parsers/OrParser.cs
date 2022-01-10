@@ -26,14 +26,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (firstResult.WasSuccessful && secondResult.WasSuccessful)
             {
-                var result = new List<IUnionResultValue<TToken>>(firstResult.Values);
-
-                foreach (var item in secondResult.Values)
-                {
-                    result.Add(item);
-                }
-
-                return UnionResultFactory.Success(this, result);
+                firstResult.Values.AddRange(secondResult.Values);
+                return UnionResultFactory.Success(this, firstResult);
             }
             if (firstResult.WasSuccessful)
             {

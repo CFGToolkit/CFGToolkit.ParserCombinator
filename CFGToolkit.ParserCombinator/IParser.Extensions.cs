@@ -87,10 +87,7 @@ namespace CFGToolkit.ParserCombinator
             return Weaver.Create(new StringParser(name, @string, token));
         }
 
-        public static IParser<CharToken, List<char>> WhiteSpaces()
-        {
-            return Weaver.Create(new WhitespacesParser("Whitespaces"));
-        }
+        public static IParser<CharToken, List<char>> WhiteSpaces = Weaver.Create(new WhitespacesParser("Whitespaces"));
 
         public static IParser<TToken, object> Not<TToken, T>(this IParser<TToken, T> parser) where TToken : IToken
         {
@@ -153,7 +150,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Sequence("Token: " + parser.Name, (args) => (T)args[1].value, new Lazy<IParser<CharToken>>(() => WhiteSpaces()), new Lazy<IParser<CharToken>>(() => parser), new Lazy<IParser<CharToken>>(() => WhiteSpaces()));
+            return Sequence("Token: " + parser.Name, (args) => (T)args[1].value, new Lazy<IParser<CharToken>>(() => WhiteSpaces), new Lazy<IParser<CharToken>>(() => parser), new Lazy<IParser<CharToken>>(() => WhiteSpaces));
         }
 
         public static IParser<CharToken, string> Text(this IParser<CharToken, List<char>> characters)

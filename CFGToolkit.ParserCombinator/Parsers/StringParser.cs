@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
             }
 
             foreach (var @char in _string)
@@ -43,7 +43,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value));
+                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
             }
 
             if (count == _string.Length)
