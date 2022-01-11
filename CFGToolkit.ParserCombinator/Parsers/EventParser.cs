@@ -36,7 +36,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             Stopwatch watch = null;
 
-            if (Telemetry.Enabled)
+            if (Options.Telemetry)
             {
                 Telemetry.IncreaseCall(Name);
                 watch.Start();
@@ -75,7 +75,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 };
             }
 
-            if (Telemetry.Enabled)
+            if (Options.Telemetry)
             {
                 watch.Stop();
                 Telemetry.IncreaseTime(Name, watch.ElapsedMilliseconds);

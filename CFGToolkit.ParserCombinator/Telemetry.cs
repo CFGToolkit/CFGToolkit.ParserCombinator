@@ -10,8 +10,6 @@ namespace CFGToolkit.ParserCombinator
         
         public static Dictionary<string, long> ParserTotalTime = new Dictionary<string, long>();
 
-        public static bool Enabled { get; set; } = false;
-
         public static void IncreaseCall(string parser)
         {
             if (parser == null)
