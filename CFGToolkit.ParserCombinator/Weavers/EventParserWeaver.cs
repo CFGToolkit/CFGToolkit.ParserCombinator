@@ -46,7 +46,11 @@ namespace CFGToolkit.ParserCombinator.Weavers
                     if (consumedPosition > args.GlobalState.LastConsumedPosition)
                     {
                         args.GlobalState.LastConsumedPosition = consumedPosition;
-                        args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
+
+                        if (Options.FullErrorReporting)
+                        {
+                            args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
+                        }
                     }
                 }
                 else
