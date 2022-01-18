@@ -18,5 +18,7 @@ namespace CFGToolkit.ParserCombinator.State
         Stack<Frame<TToken>> LastConsumedCallStack { get; set; }
 
         IParser<TToken> LastFailedParser { get; set; }
+
+        Action<bool> UpdateHandler { get; set; }
     }
 }

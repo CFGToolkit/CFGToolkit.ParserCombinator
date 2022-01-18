@@ -28,5 +28,7 @@ namespace CFGToolkit.ParserCombinator.State
         public int LastFailedPosition { get; set; } = -1;
 
         public IParser<TToken> LastFailedParser { get; set; }
+
+        public Action<bool> UpdateHandler { get; set; }
     }
 }

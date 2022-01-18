@@ -51,6 +51,11 @@ namespace CFGToolkit.ParserCombinator.Weavers
                         {
                             args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
                         }
+
+                        if (args.GlobalState.UpdateHandler != null)
+                        {
+                            args.GlobalState.UpdateHandler(true);
+                        }
                     }
                 }
                 else
@@ -59,6 +64,12 @@ namespace CFGToolkit.ParserCombinator.Weavers
                     {
                         args.GlobalState.LastFailedPosition = args.Input.Position;
                         args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
+
+
+                        if (args.GlobalState.UpdateHandler != null)
+                        {
+                            args.GlobalState.UpdateHandler(false);
+                        }
                     }
                 }
                 args.ParserCallStack.Top.Result = args.ParserResult;
