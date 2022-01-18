@@ -16,7 +16,7 @@ namespace CFGToolkit.ParserCombinator
 
         bool AtEnd { get; }
 
-        int Position { get; set; }
+        int Position { get; }
 
         IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate, bool clone);
 

@@ -39,6 +39,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             if (Options.Telemetry)
             {
                 Telemetry.IncreaseCall(Name);
+                watch = new Stopwatch();
                 watch.Start();
             }
 
