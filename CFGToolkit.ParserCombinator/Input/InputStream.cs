@@ -23,16 +23,32 @@ namespace CFGToolkit.ParserCombinator.Input
             return new InputStream<TToken>(_source, Position + count) { Attributes = Attributes };
         }
 
-        public IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate, bool clone)
+        public int AdvanceWhile(Func<TToken, bool> predicate, int start)
+        {
+            int length = 0;
+            while ((start + length) < _source.Count)
+            {
+                if (!predicate(_source[start + length]))
+                {
+                    break;
+                }
+                length++;
+            }
+
+            return length;
+        }
+
+        public IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate, bool clone, out int length)
         {
             var tmp = clone ? (InputStream<TToken>)Clone() : this;
-
+            length = 0;
             while (!tmp.AtEnd)
             {
                 if (!predicate(tmp.Current))
                 {
                     break;
                 }
+                length++;
                 tmp.Position += 1;
             }
 

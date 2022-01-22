@@ -18,8 +18,12 @@ namespace CFGToolkit.ParserCombinator
 
         int Position { get; }
 
-        IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate, bool clone);
+        IInputStream<TToken> AdvanceWhile(Func<TToken, bool> predicate, bool clone, out int length);
+
+        int AdvanceWhile(Func<TToken, bool> predicate, int start);
 
         string ToString();
+
+        IInputStream<TToken> Clone();
     }
 }

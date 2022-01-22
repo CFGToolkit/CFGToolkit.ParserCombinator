@@ -20,40 +20,29 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
-            var current = input;
-            int count = 0;
-
+            int prefixLen = 0;
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
+               prefixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position);
             }
 
-            foreach (var @char in _string)
-            {
-                if (!current.AtEnd && current.Current.Value == @char)
-                {
-                    count++;
-                    current = current.Advance();
-                }
-                else
-                {
-                    return UnionResultFactory.Failure(this, "Failed to match string: " + _string, input);
-                }
-            }
+            int i = 0;
+            int strLength = input.AdvanceWhile(token => { return i < _string.Length && token.Value == _string[i++]; }, input.Position + prefixLen);
 
-            if (_token)
-            {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
-            }
-
-            if (count == _string.Length)
-            {
-                return UnionResultFactory.Success(_string, current, this, position: input.Position, consumedTokens: current.Position - input.Position);
-            }
-            else
+            if (strLength != _string.Length)
             {
                 return UnionResultFactory.Failure(this, "Failed to match string: " + _string, input);
             }
+
+            int suffixLen = 0;
+            if (_token)
+            {
+               suffixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position + strLength + prefixLen);
+            }
+
+            int total = prefixLen + strLength + suffixLen;
+
+            return UnionResultFactory.Success(_string, input.Clone().Advance(total), this, position: input.Position, consumedTokens: total);
         }
     }
 }

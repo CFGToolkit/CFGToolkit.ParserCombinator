@@ -16,7 +16,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
-            var current = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
+            var current = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out _);
 
             return UnionResultFactory.Success(null, current, this, input.Position, consumedTokens: current.Position - input.Position);
         }

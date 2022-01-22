@@ -23,34 +23,30 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
-            var current = input;
-
+            int prefixLen = 0;
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true);
+                prefixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position);
             }
 
-            char c = '0';
-            if (!current.AtEnd)
+            int i = 0;
+            int strLength = input.AdvanceWhile(token => { return i++ < 1 && _predicate(token.Value); }, input.Position + prefixLen);
+
+            if (strLength != 1)
             {
-                c = current.Current.Value;
-                if (!_predicate(c))
-                {
-                    return UnionResultFactory.Failure(this, Name + " failed.", input);
-                }
-                current = current.Advance();
-            }
-            else
-            {
-                return UnionResultFactory.Failure(this, Name + " failed. End of input unexpected.", input);
+                return UnionResultFactory.Failure(this, "Failed to match char predicate", input);
             }
 
+            int suffixLen = 0;
             if (_token)
             {
-                current = current.AdvanceWhile(token => char.IsWhiteSpace(token.Value), false);
+                suffixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position + strLength + prefixLen);
             }
 
-            return UnionResultFactory.Success(c, current, this, position: input.Position, consumedTokens: current.Position - input.Position);
+            int total = prefixLen + strLength + suffixLen;
+
+            var @char = input.Source[input.Position + prefixLen].Value;
+            return UnionResultFactory.Success(@char, input.Clone().Advance(total), this, position: input.Position, consumedTokens: total);
         }
     }
 }

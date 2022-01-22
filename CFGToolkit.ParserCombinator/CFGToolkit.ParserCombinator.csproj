@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Marcin Gołębiowski</Authors>
@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
-    <Version>1.0.0-alpha-13</Version>
+    <Version>1.0.0-beta-01</Version>
     <Copyright>Marcin Gołębiowski</Copyright>
     <Description>A parser combinator library for .NET</Description>
   </PropertyGroup>
