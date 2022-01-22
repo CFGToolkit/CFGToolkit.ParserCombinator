@@ -172,6 +172,11 @@ namespace CFGToolkit.ParserCombinator
             return Weaver.Create(new OrParser<TToken, TResult>(name, first, second));
         }
 
+        public static IParser<TToken, T> Or<TToken, T>(string name, params IParser<TToken, T>[] parsers) where TToken : IToken
+        {
+            return Weaver.Create(new OrMultipleParser<TToken, T>(name, parsers));
+        }
+
         public static IParser<TToken, T> XOr<TToken, T>(this IParser<TToken, T> first, IParser<TToken, T> second) where TToken : IToken
         {
             if (first == null) throw new ArgumentNullException(nameof(first));
@@ -179,6 +184,11 @@ namespace CFGToolkit.ParserCombinator
 
             string name = first.Name + " xor " + second.Name;
             return Weaver.Create(new XOrParser<TToken, T>(name, first, second));
+        }
+
+        public static IParser<TToken, T> XOr<TToken, T>(string name, params IParser<TToken, T>[] parsers) where TToken : IToken
+        {
+            return Weaver.Create(new XOrMultipleParser<TToken, T>(name, parsers));
         }
 
         public static IParser<TToken, TResult> Named<TToken, TResult>(this IParser<TToken, TResult> parser, string name) where TToken : IToken
