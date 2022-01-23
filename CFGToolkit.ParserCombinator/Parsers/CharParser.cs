@@ -46,7 +46,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             int total = prefixLen + strLength + suffixLen;
 
             var @char = input.Source[input.Position + prefixLen].Value;
-            return UnionResultFactory.Success(@char, input.Clone().Advance(total), this, position: input.Position, consumedTokens: total);
+            return UnionResultFactory.Success(@char, input.Advance(total), this, position: input.Position, consumedTokens: total);
         }
     }
 }

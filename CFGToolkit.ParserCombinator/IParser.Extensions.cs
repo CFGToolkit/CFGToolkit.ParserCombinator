@@ -19,14 +19,6 @@ namespace CFGToolkit.ParserCombinator
             return Weaver.Create(new ExceptParser<TToken, T, TResult>(name, parser, except));
         }
 
-        public static IParser<TToken, TResult> Token<TToken, TResult>(string name, Predicate<TToken> predicate, Func<TToken, TResult> factory) where TToken : IToken
-        {
-            if (predicate == null) throw new ArgumentNullException(nameof(predicate));
-
-            name = "Token: " + name;
-            return Weaver.Create(new TokenParser<TToken, TResult>(name, predicate, factory));
-        }
-
         public static IParser<CharToken, char> Char(Predicate<char> predicate, string description, bool token = false)
         {
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
@@ -150,7 +142,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Sequence("Token: " + parser.Name, (args) => (T)args[1].value, new Lazy<IParser<CharToken>>(() => WhiteSpaces), new Lazy<IParser<CharToken>>(() => parser), new Lazy<IParser<CharToken>>(() => WhiteSpaces));
+            return Weaver.Create(new TokenParser<T>("Token: " + parser.Name, parser));
         }
 
         public static IParser<CharToken, string> Text(this IParser<CharToken, List<char>> characters)

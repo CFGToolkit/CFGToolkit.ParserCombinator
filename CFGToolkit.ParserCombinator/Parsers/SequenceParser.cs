@@ -28,6 +28,32 @@ namespace CFGToolkit.ParserCombinator.Parsers
             var parsers = new IParser<TToken>[_parserFactories.Length];
             var nodes = new List<TreeNode<TToken>>[_parserFactories.Length];
 
+            if (_parserFactories.Length == 1)
+            {
+                var parser = _parserFactories[0].Value;
+                var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
+
+                if (result.WasSuccessful)
+                {
+                    var values = new List<IUnionResultValue<TToken>>();
+                    foreach (var value in result.Values)
+                    {
+                        var newValue = new UnionResultValue<TToken>(typeof(TResult));
+                        newValue.Reminder = value.Reminder;
+                        newValue.Value = _factory(new[] { (parser.Name, (object)value.Value) });
+                        newValue.ConsumedTokens = value.ConsumedTokens;
+                        newValue.Position = value.Position;
+                        values.Add(newValue);
+                    }
+
+                    return UnionResultFactory.Success(this, values);
+                }
+                else
+                {
+                    return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
+                }
+            }
+
             for (var i = 0; i < _parserFactories.Length; i++)
             {
                 var parser = _parserFactories[i].Value;

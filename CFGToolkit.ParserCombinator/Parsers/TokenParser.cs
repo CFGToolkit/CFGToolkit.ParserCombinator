@@ -1,42 +1,39 @@
-﻿using System;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class TokenParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class TokenParser<TResult> : IParser<CharToken, TResult>
     {
-        private readonly Predicate<TToken> _predicate;
+        private readonly IParser<CharToken, TResult> _parser;
 
-        public TokenParser(string name, Predicate<TToken> predicate, Func<TToken, TResult> factory)
+        public TokenParser(string name, IParser<CharToken, TResult> parser)
         {
             Name = name;
-            _predicate = predicate;
-            Factory = factory;
+            _parser = parser;
         }
 
         public string Name { get; set; }
-        public Func<TToken, TResult> Factory { get; }
 
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
-            var tmp = input;
-            if (!tmp.AtEnd)
-            {
-                if (!_predicate(tmp.Current))
-                {
-                    return UnionResultFactory.Failure(this, Name + " failed.", input);
-                }
-                var t = tmp.Current;
-                tmp = tmp.Advance();
+            int start = input.Position;
+            var current = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var prefix);
+            var result = _parser.Parse(current, globalState, parserCallStack.Call(_parser, current));
 
-                return UnionResultFactory.Success(Factory(t), tmp, this, position: input.Position, consumedTokens: 1);
-            }
-            else
+            if (result.WasSuccessful)
             {
-                return UnionResultFactory.Failure(this, Name + " failed. End of input unexpected.", input);
+                foreach (var value in result.Values)
+                {
+                    value.Reminder.AdvanceWhile(token => char.IsWhiteSpace(token.Value), false, out var whitespaces);
+                    value.Position = start;
+                    value.ConsumedTokens += prefix + whitespaces;
+                }
+
+                return UnionResultFactory.Success(this, result);
             }
+            return UnionResultFactory.Failure(this, $"Fail to match {Name} token", input);
         }
     }
 }

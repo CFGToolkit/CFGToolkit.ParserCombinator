@@ -42,7 +42,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             int total = prefixLen + strLength + suffixLen;
 
-            return UnionResultFactory.Success(_string, input.Clone().Advance(total), this, position: input.Position, consumedTokens: total);
+            return UnionResultFactory.Success(_string, input.Advance(total), this, position: input.Position, consumedTokens: total);
         }
     }
 }
