@@ -9,18 +9,34 @@ namespace CFGToolkit.ParserCombinator.Input
     {
         private readonly List<TToken> _source;
         
-        public InputStream(List<TToken> source, int position)
+        public InputStream(List<TToken> source, int position, Dictionary<string, object> attributes)
         {
             _source = source;
             Position = position;
+            Attributes = attributes;
         }
+        public Dictionary<string, object> Attributes { get; set; }
+
+        public List<TToken> Source { get { return _source; } }
+
+        public TToken Current
+        {
+            get
+            {
+                return AtEnd ? default : _source[Position];
+            }
+        }
+
+        public bool AtEnd { get { return Position == _source.Count; } }
+
+        public int Position { get; private set; }
 
         public virtual IInputStream<TToken> Advance(int count)
         {
             if (Position + count > _source.Count)
                 throw new InvalidOperationException("The input is already at the end of the source.");
 
-            return new InputStream<TToken>(_source, Position + count) { Attributes = Attributes };
+            return new InputStream<TToken>(_source, Position + count, Attributes);
         }
 
         public int AdvanceWhile(Func<TToken, bool> predicate, int start)
@@ -57,24 +73,8 @@ namespace CFGToolkit.ParserCombinator.Input
 
         public virtual IInputStream<TToken> Clone()
         {
-            return new InputStream<TToken>(_source, Position) { Attributes = Attributes };
+            return new InputStream<TToken>(_source, Position, Attributes);
         }
-
-        public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
-
-        public List<TToken> Source { get { return _source; } }
-
-        public TToken Current
-        {
-            get
-            {
-                return AtEnd ? default : _source[Position];
-            }
-        }
-
-        public bool AtEnd { get { return Position == _source.Count; } }
-
-        public int Position { get; private set; }
 
         public override int GetHashCode()
         {

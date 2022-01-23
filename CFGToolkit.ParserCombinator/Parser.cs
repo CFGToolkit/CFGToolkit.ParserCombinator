@@ -32,7 +32,7 @@ namespace CFGToolkit.ParserCombinator
             {
                 state = new GlobalState<TToken>();
             }
-            var inputStream = new InputStream<TToken>(tokens, 0);
+            var inputStream = new InputStream<TToken>(tokens, 0, new Dictionary<string, object>());
             var parserCallStack = new ParserCallStack<TToken>(new Frame<TToken>() { Parser = parser, Input = inputStream });
             var result = parser.Parse(inputStream, state, parserCallStack);
             result.GlobalState = state;
