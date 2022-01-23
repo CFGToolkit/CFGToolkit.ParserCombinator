@@ -10,12 +10,12 @@
     <PackageProjectUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CFGToolkit/CFGToolkit.ParserCombinator</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
-    <Version>1.0.0-beta-05</Version>
+    <Version>1.0.0-beta-06</Version>
     <Copyright>Marcin Gołębiowski</Copyright>
     <Description>A parser combinator library for .NET</Description>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <Optimize>True</Optimize>
   </PropertyGroup>
 </Project>
