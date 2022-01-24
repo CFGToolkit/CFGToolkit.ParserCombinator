@@ -46,14 +46,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             for (var iteration = 0; !_maximumCount.HasValue || iteration < _maximumCount; iteration++)
             {
-                var nodesToProcess = nodes.Where(v => v.Depth == iteration);
+                var toAdd = new List<TreeNode<TToken>>();
 
-                if (!nodesToProcess.Any())
-                {
-                    break;
-                }
-
-                foreach (var node in nodesToProcess.ToList())
+                foreach (var node in nodes.Where(v => v.Depth == iteration))
                 {
                     var next = _parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(_parser, node.Value.Reminder));
                     if (next.WasSuccessful)
@@ -71,7 +66,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                                 };
 
                                 node.IsLeaf = false;
-                                nodes.Add(new TreeNode<TToken>()
+                                toAdd.Add(new TreeNode<TToken>()
                                 {
                                     Depth = node.Depth + 1,
                                     Value = newResultValue,
@@ -82,6 +77,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         }
                     }
                 }
+                if (toAdd.Count == 0)
+                {
+                    break;
+                }
+                nodes.AddRange(toAdd);
             }
             var result = new List<IUnionResultValue<TToken>>();
             if (_greedy)
