@@ -25,9 +25,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var parsers = new IParser<TToken>[_parserFactories.Length];
-            var nodes = new List<TreeNode<TToken>>[_parserFactories.Length];
-
             if (_parserFactories.Length == 1)
             {
                 var parser = _parserFactories[0].Value;
@@ -53,6 +50,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
                 }
             }
+
+            var parsers = new IParser<TToken>[_parserFactories.Length];
+            var nodes = new List<TreeNode<TToken>>[_parserFactories.Length];
 
             for (var i = 0; i < _parserFactories.Length; i++)
             {
@@ -114,11 +114,16 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     var value = new UnionResultValue<TToken>(typeof(TResult));
                     value.Reminder = leaf.Value.Reminder;
 
-                    int i = 0;
-                    var args = paths.Select(pathObject => (parsers[i++].Name, pathObject.Value.Value)).ToArray();
+                    var args = new (string valueParserName, object value)[paths.Length];
+                    
+                    for (var i = 0; i < paths.Length; i++)
+                    {
+                        args[i] = (parsers[i].Name, paths[i].Value.Value);
+                        value.ConsumedTokens += paths[i].Value.ConsumedTokens;
+                    }
                     value.Value = _factory(args);
-                    value.ConsumedTokens = paths.Sum(path => (path.Value).ConsumedTokens);
-                    value.Position = paths.First().Value.Position;
+                    value.Position = paths[0].Value.Position;
+
                     resultValues.Add(value);
                 }
             }
