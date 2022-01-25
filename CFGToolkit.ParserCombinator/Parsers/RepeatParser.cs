@@ -48,7 +48,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 var toAdd = new List<TreeNode<TToken>>();
 
-                foreach (var node in nodes.Where(v => v.Depth == iteration))
+                foreach (var node in Where(nodes, iteration))
                 {
                     var next = _parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(_parser, node.Value.Reminder));
                     if (next.WasSuccessful)
@@ -101,6 +101,24 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 return UnionResultFactory.Failure(this, "Failure", input);
             }
+        }
+
+        private IEnumerable<TreeNode<TToken>> Where(List<TreeNode<TToken>> list, int depth)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].Depth == depth)
+                {
+                    yield return list[i];
+                }
+
+                if (list[i].Depth < depth)
+                {
+                    break;
+                }
+            }
+
+            yield break;
         }
 
         private void CollectResultsLazy(List<TreeNode<TToken>> nodes, List<IUnionResultValue<TToken>> result)
