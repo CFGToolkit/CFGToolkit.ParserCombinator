@@ -31,6 +31,10 @@ namespace CFGToolkit.ParserCombinator
             else
             {
                 state = new GlobalState<TToken>();
+            }
+
+            if (Options.Cache && state.Cache == null)
+            {
                 state.Cache = new Dictionary<long, IUnionResult<TToken>>[tokens.LongCount()];
                 for (var i = 0; i < tokens.LongCount(); i++)
                 {
