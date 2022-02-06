@@ -32,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Tests
             from spaces1 in Parser.WhiteSpace.Many()
             from equal in Parser.String("::=")
             from spaces2 in Parser.WhiteSpace.Many()
-            from body in Parser.Regex("[^ ]((?!(\r?\n){2}).)+", RegexOptions.Singleline)
+            from body in Parser.Regex("[^ ]((?!(\r?\n){2}).)+", options: RegexOptions.Singleline)
             from lines in Parser.LineEnd.Many()
             select name;
 

@@ -20,5 +20,7 @@ namespace CFGToolkit.ParserCombinator.State
         IParser<TToken> LastFailedParser { get; set; }
 
         Action<bool> UpdateHandler { get; set; }
+
+        Dictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
     }
 }

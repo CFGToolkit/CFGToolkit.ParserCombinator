@@ -47,7 +47,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
+                    return UnionResultFactory.Failure(this, "Parser failed", input);
                 }
             }
 
@@ -66,7 +66,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (!result.WasSuccessful)
                     {
-                        return UnionResultFactory.Failure(this, $"Parser {parser} was not successful", input);
+                        return UnionResultFactory.Failure(this, "Parser element was not successful", input);
                     }
                     else
                     {
@@ -92,7 +92,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (!nodes[i].Any())
                     {
-                        return UnionResultFactory.Failure(this, $"{this.Name} failed", input);
+                        return UnionResultFactory.Failure(this, "Parser failed", input);
                     }
                 }
             }

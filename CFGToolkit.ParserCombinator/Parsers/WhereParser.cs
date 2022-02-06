@@ -34,7 +34,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     return UnionResultFactory.Success(this, filteredValues.ToList());
                 }
 
-                return UnionResultFactory.Failure(this, $"Parser {this.Name} failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", input);
             }
 
             return result;

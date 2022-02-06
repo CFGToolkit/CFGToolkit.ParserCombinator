@@ -32,12 +32,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, $"Parser {_parser.Name} doesn't parse all input in {Name} parser", input);
+                    return UnionResultFactory.Failure(this, "Parser doesn't parse all input", input);
                 }
             }
             else
             {
-                return UnionResultFactory.Failure(this, $"Parser {_parser.Name} failed in {Name} parser", input);
+                return UnionResultFactory.Failure(this, "Parser failed", input);
             }
         }
     }

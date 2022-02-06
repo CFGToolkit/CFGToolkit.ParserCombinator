@@ -25,6 +25,8 @@ namespace CFGToolkit.ParserCombinator.State
 
         public Stack<Frame<TToken>> LastConsumedCallStack { get; set; }
 
+        public Dictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
+
         public int LastFailedPosition { get; set; } = -1;
 
         public IParser<TToken> LastFailedParser { get; set; }

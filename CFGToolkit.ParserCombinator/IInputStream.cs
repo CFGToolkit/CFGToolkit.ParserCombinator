@@ -4,7 +4,7 @@ using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator
 {
-    public interface IInputStream<TToken> : IEquatable<IInputStream<TToken>> where TToken : IToken
+    public interface IInputStream<TToken> : IEquatable<IInputStream<TToken>>, IEnumerable<TToken> where TToken : IToken
     {
         IInputStream<TToken> Advance(int count = 1);
 

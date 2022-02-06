@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CFGToolkit.ParserCombinator;
@@ -29,7 +30,11 @@ namespace CFGToolkit.ParserCombinator.Input
 
         public bool AtEnd { get { return Position == _source.Count; } }
 
-        public int Position { get; private set; }
+        public int Position {
+            get;
+
+            private set; 
+        }
 
         public virtual IInputStream<TToken> Advance(int count)
         {
@@ -99,6 +104,16 @@ namespace CFGToolkit.ParserCombinator.Input
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return Equals(_source, other.Source) && Position == other.Position;
+        }
+
+        public IEnumerator<TToken> GetEnumerator()
+        {
+            return Source.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Source.GetEnumerator();
         }
 
         public static bool operator ==(InputStream<TToken> left, InputStream<TToken> right)

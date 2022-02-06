@@ -145,6 +145,17 @@ namespace CFGToolkit.ParserCombinator
             return Weaver.Create(new TokenParser<T>("Token: " + parser.Name, parser));
         }
 
+        public static IParser<TToken, T> Cached<TToken, T>(this IParser<TToken, T> parser, long id) where TToken : IToken
+        {
+            if (parser == null) throw new ArgumentNullException(nameof(parser));
+
+            if (Options.Cache)
+            {
+                return new CachedParser<TToken, T>("Cached: " + parser.Name, parser, id);
+            }
+            return parser;
+        }
+
         public static IParser<CharToken, string> Text(this IParser<CharToken, List<char>> characters)
         {
             return Weaver.Create(characters.Then(chs => new string(chs.ToArray())).Named("Text"));

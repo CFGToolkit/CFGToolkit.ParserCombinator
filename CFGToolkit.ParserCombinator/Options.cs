@@ -6,5 +6,6 @@
 
         public static bool Telemetry { get; set; } = false;
 
+        public static bool Cache { get; set; } = false;
     }
 }

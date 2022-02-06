@@ -35,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, $"Parser {Name} failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", input);
             }
         }
     }

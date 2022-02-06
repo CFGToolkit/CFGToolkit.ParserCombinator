@@ -42,7 +42,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 return UnionResultFactory.Success(this, fullResults);
             }
 
-            return UnionResultFactory.Failure(this, $"Parser {Name} failed", input);
+            return UnionResultFactory.Failure(this, "Parser failed", input);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (result.WasSuccessful)
             {
-                return UnionResultFactory.Failure(this, $"Parser {_parser.Name} matched unexpectedly", input);
+                return UnionResultFactory.Failure(this, "Parser matched unexpectedly", input);
             }
 
             return UnionResultFactory.Success(null, input, this, input.Position, consumedTokens: 0);

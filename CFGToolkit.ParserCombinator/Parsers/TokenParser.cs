@@ -19,21 +19,22 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
             int start = input.Position;
-            var current = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var prefix);
-            var result = _parser.Parse(current, globalState, parserCallStack.Call(_parser, current));
+            input = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var prefix);
+
+            var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
             if (result.WasSuccessful)
             {
                 foreach (var value in result.Values)
                 {
-                    value.Reminder.AdvanceWhile(token => char.IsWhiteSpace(token.Value), false, out var whitespaces);
                     value.Position = start;
-                    value.ConsumedTokens += prefix + whitespaces;
+                    value.Reminder = value.Reminder.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var suffix);
+                    value.ConsumedTokens += suffix + prefix;
                 }
 
                 return UnionResultFactory.Success(this, result);
             }
-            return UnionResultFactory.Failure(this, $"Fail to match {Name} token", input);
+            return UnionResultFactory.Failure(this, "Failed to parse", input);
         }
     }
 }

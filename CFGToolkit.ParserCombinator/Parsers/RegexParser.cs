@@ -10,12 +10,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
     {
         private readonly Regex _regex;
         private readonly Func<string, bool> _predicate;
+        private readonly bool _token;
 
-        public RegexParser(string name, Regex regex, Func<string, bool> predicate)
+        public RegexParser(string name, Regex regex, Func<string, bool> predicate, bool token = false)
         {
             Name = name;
             _regex = regex;
             _predicate = predicate;
+            _token = token;
         }
 
         public string Name { get; set; }
@@ -24,26 +26,37 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             if (!input.AtEnd)
             {
-                var remainder = input;
-                Match match = _regex.Match(input.GetText(), input.Position);
+                int prefixLen = 0;
+                if (_token)
+                {
+                    prefixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position);
+                }
+                Match match = _regex.Match(input.GetText(), input.Position + prefixLen);
 
                 if (match.Success)
                 {
                     if (_predicate(match.Value))
                     {
-                        remainder = remainder.Advance(match.Length);
-                        return UnionResultFactory.Success(match.Value, remainder, this, input.Position, consumedTokens: match.Length);
+                        int suffixLen = 0;
+                        if (_token)
+                        {
+                            suffixLen = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), input.Position + match.Length + prefixLen);
+                        }
+
+                        var remainder = input.Advance(match.Length + prefixLen + suffixLen);
+
+                        return UnionResultFactory.Success(match.Value, remainder, this, input.Position, consumedTokens: match.Length + prefixLen + suffixLen);
                     }
                     else
                     {
-                        return UnionResultFactory.Failure(this, $"Failed to match predicate on regex: {_regex}", input);
+                        return UnionResultFactory.Failure(this, "Failed to match predicate on regex", input);
                     }
                 }
 
-                return UnionResultFactory.Failure(this, $"Failed to match: {_regex}", input);
+                return UnionResultFactory.Failure(this, "Failed to match regex", input);
             }
 
-            return UnionResultFactory.Failure(this, "Failed to match: " + _regex + ". Unexpected end of input", input);
+            return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", input);
         }
     }
 }

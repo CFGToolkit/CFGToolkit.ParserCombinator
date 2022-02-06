@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
@@ -63,7 +62,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, $"{this} failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", input);
             }
         }
     }

@@ -9,12 +9,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
     {
         private readonly IParser<TToken, TResult> _left;
         private readonly IParser<TToken, TResult> _right;
+        private readonly string _errorMessage;
 
         public OrParser(string name, IParser<TToken, TResult> left, IParser<TToken, TResult> right)
         {
             Name = name;
             _left = left;
             _right = right;
+            _errorMessage = $"Both parsers failed: ({_left.Name}) and ({_right.Name})";
         }
 
         public string Name { get; set; }
@@ -39,7 +41,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 return UnionResultFactory.Success(this, secondResult);
             }
 
-            return UnionResultFactory.Failure(this, $"Both parsers failed: ({_left.Name}) and ({_right.Name})", input);
+            return UnionResultFactory.Failure(this, _errorMessage, input);
         }
     }
 }
