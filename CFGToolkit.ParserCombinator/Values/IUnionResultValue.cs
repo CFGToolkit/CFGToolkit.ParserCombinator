@@ -35,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Values
                 return string.Empty;
             }
 
-            return new string(value.Reminder.Source.Skip(value.Position).Take(value.ConsumedTokens).Select(token => token.Value).ToArray());
+            return new string(value.Reminder.Tokens.Skip(value.Position).Take(value.ConsumedTokens).Select(token => token.Value).ToArray());
         }
     }
 }

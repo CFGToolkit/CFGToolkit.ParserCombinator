@@ -7,7 +7,7 @@ namespace CFGToolkit.ParserCombinator.Weavers
 {
     public class EventParserWeaver : IParserWeaver
     {
-        public IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser) where TToken : IToken
+        public IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser, bool updateState = true) where TToken : IToken
         {
             var events = new EventParser<TToken, TResult>(parser);
 
@@ -21,6 +21,10 @@ namespace CFGToolkit.ParserCombinator.Weavers
                     {
                         action(args);
                     }
+                }
+                else
+                {
+                    events.HasBefore = false;
                 }
             }));
 
@@ -38,41 +42,49 @@ namespace CFGToolkit.ParserCombinator.Weavers
                         }
                     }
                 }
-
-                if (args.ParserResult.WasSuccessful)
-                {
-                    var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
-                    var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
-                    if (consumedPosition > args.GlobalState.LastConsumedPosition)
-                    {
-                        args.GlobalState.LastConsumedPosition = consumedPosition;
-
-                        if (Options.FullErrorReporting)
-                        {
-                            args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
-                        }
-
-                        if (args.GlobalState.UpdateHandler != null)
-                        {
-                            args.GlobalState.UpdateHandler(true);
-                        }
-                    }
-                }
                 else
                 {
-                    if (args.Input.Position > args.GlobalState.LastFailedPosition)
+                    if (!updateState)
                     {
-                        args.GlobalState.LastFailedPosition = args.Input.Position;
-                        args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
-
-
-                        if (args.GlobalState.UpdateHandler != null)
+                        events.HasAfter = false;
+                    }
+                    else
+                    {
+                        if (args.ParserResult.WasSuccessful)
                         {
-                            args.GlobalState.UpdateHandler(false);
+                            var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
+                            var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
+                            if (consumedPosition > args.GlobalState.LastConsumedPosition)
+                            {
+                                args.GlobalState.LastConsumedPosition = consumedPosition;
+
+                                if (Options.FullErrorReporting)
+                                {
+                                    args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
+                                }
+
+                                if (args.GlobalState.UpdateHandler != null)
+                                {
+                                    args.GlobalState.UpdateHandler(true);
+                                }
+                            }
                         }
+                        else
+                        {
+                            if (args.Input.Position > args.GlobalState.LastFailedPosition)
+                            {
+                                args.GlobalState.LastFailedPosition = args.Input.Position;
+                                args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
+
+                                if (args.GlobalState.UpdateHandler != null)
+                                {
+                                    args.GlobalState.UpdateHandler(false);
+                                }
+                            }
+                        }
+                        args.ParserCallStack.Top.Result = args.ParserResult;
                     }
                 }
-                args.ParserCallStack.Top.Result = args.ParserResult;
             }));
 
             return events;

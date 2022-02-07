@@ -20,6 +20,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
+            if (input.AtEnd)
+            {
+                return UnionResultFactory.Failure(this, "Failed to match string. Unexpected end of input", input);
+            }
+
             int prefixLen = 0;
             if (_token)
             {
@@ -31,7 +36,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (strLength != _string.Length)
             {
-                return UnionResultFactory.Failure(this, "Failed to match string: " + _string, input);
+                return UnionResultFactory.Failure(this, "Failed to match string", input);
             }
 
             int suffixLen = 0;

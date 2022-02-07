@@ -28,8 +28,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var nodes = new List<TreeNode<TToken>>();
-            nodes.Add(
+            var nodes = new List<TreeNode<TToken>>
+            {
                 new TreeNode<TToken>()
                 {
                     Depth = 0,
@@ -41,7 +41,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Value = null,
                     },
                     IsLeaf = true
-                });
+                }
+            };
 
 
             for (var iteration = 0; !_maximumCount.HasValue || iteration < _maximumCount; iteration++)
@@ -83,14 +84,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 nodes.AddRange(toAdd);
             }
-            var result = new List<IUnionResultValue<TToken>>();
+            List<IUnionResultValue<TToken>> result;
+
             if (_greedy)
             {
-                CollectResultsGreedy(nodes, result);
+                result = CollectResultsGreedy(nodes);
             }
             else
             {
-                CollectResultsLazy(nodes, result);
+                result = CollectResultsLazy(nodes);
             }
 
             if (result.Any())
@@ -121,7 +123,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             yield break;
         }
 
-        private void CollectResultsLazy(List<TreeNode<TToken>> nodes, List<IUnionResultValue<TToken>> result)
+        private List<IUnionResultValue<TToken>> CollectResultsLazy(List<TreeNode<TToken>> nodes)
         {
             IEnumerable<TreeNode<TToken>> filtred;
             if (_minimumCount.HasValue)
@@ -132,6 +134,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 filtred = nodes;
             }
+
+            var result = new List<IUnionResultValue<TToken>>(filtred.Count());
 
             foreach (var node in filtred)
             {
@@ -160,9 +164,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 result.Add(value);
             }
+
+            return result;
         }
 
-        private void CollectResultsGreedy(List<TreeNode<TToken>> nodes, List<IUnionResultValue<TToken>> result)
+        private List<IUnionResultValue<TToken>>  CollectResultsGreedy(List<TreeNode<TToken>> nodes)
         {
             IEnumerable<TreeNode<TToken>> filtred;
             if (_minimumCount.HasValue)
@@ -173,6 +179,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             {
                 filtred = nodes.Where(item => item.IsLeaf);
             }
+
+            var result = new List<IUnionResultValue<TToken>>(filtred.Count());
 
             foreach (var leaf in filtred)
             {
@@ -199,6 +207,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 list.Reverse();
                 result.Add(value);
             }
+
+            return result;
         }
     }
 }

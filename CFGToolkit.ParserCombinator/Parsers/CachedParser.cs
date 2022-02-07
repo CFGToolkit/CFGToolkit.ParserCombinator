@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             if (input.AtEnd)
             {
-                return UnionResultFactory.Failure(this, "Unexpected end of input", input);
+                return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", input);
             }
 
             if (globalState.Cache[input.Position].TryGetValue(Id, out var result))
@@ -32,12 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
 
             var newResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
-
-            if (newResult.WasSuccessful)
-            {
-                globalState.Cache[input.Position].Add(Id, newResult);
-            }
-
+            globalState.Cache[input.Position].Add(Id, newResult);
             return newResult;
         }
     }

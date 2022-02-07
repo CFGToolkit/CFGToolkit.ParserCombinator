@@ -10,7 +10,7 @@ namespace CFGToolkit.ParserCombinator
 
         Dictionary<string, object> Attributes { get; set; }
 
-        List<TToken> Source { get; }
+        List<TToken> Tokens { get; }
 
         TToken Current { get; }
 

@@ -28,7 +28,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (results.WasSuccessful)
             {
-                var result = new List<IUnionResultValue<TToken>>();
                 var successValues = results.Values;
                 var optionValues = successValues
                     .Select(v => (IUnionResultValue<TToken>)new UnionResultValue<TToken>(typeof(IOption<T>))
@@ -38,6 +37,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         ConsumedTokens = v.ConsumedTokens,
                         Reminder = v.Reminder,
                     });
+
+                var result = new List<IUnionResultValue<TToken>>(optionValues.Count());
 
                 if (!Greedy && !successValues.Any(item => item.ConsumedTokens == 0))
                 {
@@ -49,14 +50,16 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                var result = new List<IUnionResultValue<TToken>>();
-                result.Add(new UnionResultValue<TToken>(typeof(IOption<T>))
+                var result = new List<IUnionResultValue<TToken>>
                 {
-                    ConsumedTokens = 0,
-                    Value = new None<T>(),
-                    Reminder = input,
-                    Position = input.Position,
-                });
+                    new UnionResultValue<TToken>(typeof(IOption<T>))
+                    {
+                        ConsumedTokens = 0,
+                        Value = new None<T>(),
+                        Reminder = input,
+                        Position = input.Position,
+                    }
+                };
 
                 return UnionResultFactory.Success(this, result);
             }

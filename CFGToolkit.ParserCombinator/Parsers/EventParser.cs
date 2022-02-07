@@ -16,7 +16,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public List<Action<BeforeArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeArgs<TToken>>>();
 
+        public bool HasBefore { get; set; } = true;
+
         public List<Action<AfterArgs<TToken>>> AfterParse { get; } = new List<Action<AfterArgs<TToken>>>();
+
+        public bool HasAfter { get; set; } = true;
+
 
         public string Name
         {
@@ -43,7 +48,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 watch.Start();
             }
 
-            if (BeforeParse.Any())
+            if (HasBefore && BeforeParse.Any())
             {
                 var beforeArgs = new BeforeArgs<TToken>()
                 {
@@ -60,7 +65,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             var result = Parser.Parse(input, globalState, parserCallStack);
 
-            if (AfterParse.Any())
+            if (HasAfter && AfterParse.Any())
             {
                 var afterArgs = new AfterArgs<TToken>()
                 {

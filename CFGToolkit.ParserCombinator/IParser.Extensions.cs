@@ -24,7 +24,7 @@ namespace CFGToolkit.ParserCombinator
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             string name = "Char: " + description;
-            return Weaver.Create(new CharParser(name, predicate, description, token));
+            return Weaver.Create(new CharParser(name, predicate, description, token), Options.CharLevelReporting);
         }
 
         public static IParser<CharToken, char> Char(char c, bool token = false)
@@ -76,7 +76,7 @@ namespace CFGToolkit.ParserCombinator
             if (@string == null) throw new ArgumentNullException(nameof(@string));
 
             string name = "String: " + @string;
-            return Weaver.Create(new StringParser(name, @string, token));
+            return Weaver.Create(new StringParser(name, @string, token), Options.StringLevelReporting);
         }
 
         public static IParser<CharToken, List<char>> WhiteSpaces = Weaver.Create(new WhitespacesParser("Whitespaces"));

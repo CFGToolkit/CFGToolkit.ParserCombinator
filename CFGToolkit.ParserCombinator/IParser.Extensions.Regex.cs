@@ -7,14 +7,14 @@ namespace CFGToolkit.ParserCombinator
 {
     public partial class Parser
     {
-        public static IParser<CharToken, string> Regex(string pattern, bool token = false, RegexOptions options = RegexOptions.None)
+        public static IParser<CharToken, string> Regex(string pattern, bool token = false, RegexOptions options = RegexOptions.Compiled)
         {
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
 
             return RegexMatch("Pattern: " + pattern, new Regex(pattern, options), token);
         }
 
-        public static IParser<CharToken, string> RegexMatch(string pattern, bool token = false, RegexOptions options = RegexOptions.None)
+        public static IParser<CharToken, string> RegexMatch(string pattern, bool token = false, RegexOptions options = RegexOptions.Compiled)
         {
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
 
@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (regex == null) throw new ArgumentNullException(nameof(regex));
             regex = OptimizeRegex(regex);
-            return Weaver.Create(new RegexParser(name, regex, (value) => true, token));
+            return Weaver.Create(new RegexParser(name, regex, (value) => true, token), Options.RegexLevelReporting);
         }
 
         public static IParser<CharToken, string> RegexExt(string pattern, Func<string, bool> predicate, bool token = false)
@@ -34,7 +34,7 @@ namespace CFGToolkit.ParserCombinator
 
             var regex = OptimizeRegex(new Regex(pattern));
 
-            return Weaver.Create(new RegexParser("Pattern: " + pattern, regex, predicate, token));
+            return Weaver.Create(new RegexParser("Pattern: " + pattern, regex, predicate, token), Options.RegexLevelReporting);
         }
 
         private static Regex OptimizeRegex(Regex regex)

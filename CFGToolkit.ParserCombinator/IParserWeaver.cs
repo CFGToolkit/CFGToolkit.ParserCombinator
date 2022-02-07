@@ -4,6 +4,6 @@ namespace CFGToolkit.ParserCombinator
 {
     public interface IParserWeaver
     {
-        IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser) where TToken : IToken;
+        IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser, bool updateState = true) where TToken : IToken;
     }
 }

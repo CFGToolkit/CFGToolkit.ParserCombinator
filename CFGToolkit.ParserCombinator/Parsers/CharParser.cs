@@ -23,6 +23,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
+            if (input.AtEnd)
+            {
+                return UnionResultFactory.Failure(this, "Failed to match char. Unexpected end of input", input);
+            }
+
             int prefixLen = 0;
             if (_token)
             {
@@ -45,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             int total = prefixLen + strLength + suffixLen;
 
-            var @char = input.Source[input.Position + prefixLen].Value;
+            var @char = input.Tokens[input.Position + prefixLen].Value;
             return UnionResultFactory.Success(@char, input.Advance(total), this, position: input.Position, consumedTokens: total);
         }
     }
