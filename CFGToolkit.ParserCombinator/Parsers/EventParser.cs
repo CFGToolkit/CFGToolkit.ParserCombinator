@@ -14,6 +14,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Parser = parser;
         }
 
+        public Dictionary<string, string> Tags { get; set; }
+
         public List<Action<BeforeArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeArgs<TToken>>>();
 
         public bool HasBefore { get; set; } = true;
@@ -21,7 +23,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public List<Action<AfterArgs<TToken>>> AfterParse { get; } = new List<Action<AfterArgs<TToken>>>();
 
         public bool HasAfter { get; set; } = true;
-
 
         public string Name
         {

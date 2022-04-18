@@ -1,4 +1,5 @@
-﻿using CFGToolkit.ParserCombinator.Input;
+﻿using System.Collections.Generic;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
@@ -15,6 +16,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
         }
 
         public string Name { get; set; }
+
+        public Dictionary<string, string> Tags { get; set; }
 
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {

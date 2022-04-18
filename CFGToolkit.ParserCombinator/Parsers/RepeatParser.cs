@@ -26,6 +26,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
+        public Dictionary<string, string> Tags { get; set; }
+
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var nodes = new List<TreeNode<TToken>>

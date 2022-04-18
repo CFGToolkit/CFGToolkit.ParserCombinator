@@ -187,6 +187,23 @@ parameter_identifier2[no-token] ::= identifier
         }
 
         [Fact]
+        public void TagTest()
+        {
+            var parser = Parser.String("test").Tag("t1", "value");
+
+            Assert.Equal("value", parser.Tags["t1"]);
+        }
+
+        [Fact]
+        public void Tag2Test()
+        {
+            var parser = Parser.String("test").Tag("t1", "value").Tag("t2", "value2");
+
+            Assert.Equal("value", parser.Tags["t1"]);
+            Assert.Equal("value2", parser.Tags["t2"]);
+        }
+
+        [Fact]
         public void ProblematicGrammar()
         {
             var parser =

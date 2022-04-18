@@ -204,6 +204,22 @@ namespace CFGToolkit.ParserCombinator
             return parser;
         }
 
+        public static IParser<TToken, TResult> Tag<TToken, TResult>(this IParser<TToken, TResult> parser, string tagName, string tagValue) where TToken : IToken
+        {
+            if (parser == null) throw new ArgumentNullException(nameof(parser));
+            if (tagName == null) throw new ArgumentNullException(nameof(tagName));
+            if (tagValue == null) throw new ArgumentNullException(nameof(tagValue));
+
+            if (parser.Tags == null)
+            {
+                parser.Tags = new Dictionary<string, string>();
+            }
+
+            parser.Tags[tagName] = tagValue;
+
+            return parser;
+        }
+
         public static IParser<TToken, List<T>> Once<TToken, T>(this IParser<TToken, T> parser) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));

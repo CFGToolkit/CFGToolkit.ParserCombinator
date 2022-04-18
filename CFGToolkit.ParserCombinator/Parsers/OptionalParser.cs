@@ -20,6 +20,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
+        public Dictionary<string, string> Tags { get; set; }
+
         public bool Greedy { get; }
 
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)

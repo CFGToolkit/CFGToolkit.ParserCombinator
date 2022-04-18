@@ -14,6 +14,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
+        public Dictionary<string, string> Tags { get; set; }
+
         public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
             var current = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var length);

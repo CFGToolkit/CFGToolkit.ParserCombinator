@@ -18,6 +18,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public string Name { get; set; }
 
+        public Dictionary<string, string> Tags { get; set; }
+
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             List<IUnionResultValue<TToken>> fullResults = null;
