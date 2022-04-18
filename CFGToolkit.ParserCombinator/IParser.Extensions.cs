@@ -204,7 +204,7 @@ namespace CFGToolkit.ParserCombinator
             return parser;
         }
 
-        public static IParser<TToken, TResult> Tag<TToken, TResult>(this IParser<TToken, TResult> parser, string tagName, string tagValue) where TToken : IToken
+        public static IParser<TToken, TResult> Tag<TToken, TResult>(this IParser<TToken, TResult> parser, string tagName, string tagValue = null) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
             if (tagName == null) throw new ArgumentNullException(nameof(tagName));
