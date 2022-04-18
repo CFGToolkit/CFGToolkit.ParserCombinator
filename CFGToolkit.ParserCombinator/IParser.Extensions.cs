@@ -208,7 +208,6 @@ namespace CFGToolkit.ParserCombinator
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
             if (tagName == null) throw new ArgumentNullException(nameof(tagName));
-            if (tagValue == null) throw new ArgumentNullException(nameof(tagValue));
 
             if (parser.Tags == null)
             {
