@@ -26,7 +26,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var firstResult = _left.Parse(input, globalState, parserCallStack.Call(_left, input));
-            var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_left, input));
+            var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_right, input));
 
             if (firstResult.WasSuccessful && secondResult.WasSuccessful)
             {
