@@ -13,5 +13,9 @@
         public static bool Telemetry { get; set; } = false;
 
         public static bool Cache { get; set; } = false;
+
+        public static bool MultiThreading { get; set; } = false;
+
+        public static object SyncLock { get; set; } = new object();
     }
 }

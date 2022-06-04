@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
-using CFGToolkit.ParserCombinator.Parsers;
 
 namespace CFGToolkit.ParserCombinator.State
 {
@@ -11,21 +11,21 @@ namespace CFGToolkit.ParserCombinator.State
         {
         }
 
-        public Dictionary<IParser<TToken>, List<Action<BeforeArgs<TToken>>>> BeforeParseActions
+        public ConcurrentDictionary<string, ConcurrentBag<BeforeParseAction<TToken>>> BeforeParseActions
         {
             get; set;
         }
 
-        public Dictionary<IParser<TToken>, List<Action<AfterArgs<TToken>>>> AfterParseActions
+        public ConcurrentDictionary<string, ConcurrentBag<AfterParseAction<TToken>>> AfterParseActions
         {
             get; set;
         }
 
         public int LastConsumedPosition { get; set; } = -1;
 
-        public Stack<Frame<TToken>> LastConsumedCallStack { get; set; }
+        public List<Frame<TToken>> LastConsumedCallStack { get; set; }
 
-        public Dictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
+        public ConcurrentDictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
 
         public int LastFailedPosition { get; set; } = -1;
 

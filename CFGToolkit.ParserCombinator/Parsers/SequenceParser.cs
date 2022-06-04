@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CFGToolkit.ParserCombinator;
+using System.Threading;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
 using CFGToolkit.ParserCombinator.State;
@@ -12,9 +12,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
     public class SequenceParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
     {
         private readonly Func<(string valueParserName, object value)[], TResult> _factory;
-        private readonly Lazy<IParser<TToken>>[] _parserFactories;
+        private readonly ThreadLocal<IParser<TToken>>[] _parserFactories;
 
-        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories)
+        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params ThreadLocal<IParser<TToken>>[] parserFactories)
         {
             Name = name;
             _factory = select;
@@ -68,7 +68,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (!result.WasSuccessful)
                     {
-                        return UnionResultFactory.Failure(this, "Parser element was not successful", input);
+                        return UnionResultFactory.Failure(this, $"Parser {parser.Name} was not successful", input);
                     }
                     else
                     {

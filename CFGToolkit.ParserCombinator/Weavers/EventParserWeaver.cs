@@ -6,86 +6,77 @@ using CFGToolkit.ParserCombinator.Parsers;
 namespace CFGToolkit.ParserCombinator.Weavers
 {
     public class EventParserWeaver : IParserWeaver
-    {
+    { 
         public IParser<TToken, TResult> Create<TToken, TResult>(IParser<TToken, TResult> parser, bool updateState = true) where TToken : IToken
         {
             var events = new EventParser<TToken, TResult>(parser);
 
-            events.BeforeParse.Add(new Action<BeforeArgs<TToken>>((args) =>
+            events.Init = (args) =>
             {
-                var actions = args.GlobalState.BeforeParseActions;
+                var State = args.GlobalState;
 
-                if (actions?.ContainsKey(events) ?? false)
+                events.BeforeParse.Add((args) =>
                 {
-                    foreach (var action in actions[events])
+                    if (args.ParserCallStack.Top.TokenSource.Token.IsCancellationRequested)
                     {
-                        action(args);
+                        args.Skip = true;
+                        return;
                     }
-                }
-                else
-                {
-                    events.HasBefore = false;
-                }
-            }));
+                });
 
-            events.AfterParse.Add(new Action<AfterArgs<TToken>>((args) =>
-            {
-                var actions = args.GlobalState.AfterParseActions;
-
-                if (actions?.ContainsKey(events) ?? false)
+                var @before = State?.BeforeParseActions;
+                if (@before?.TryGetValue(parser.Name, out var list) ?? false)
                 {
-                    foreach (var action in actions[events])
+                    events.BeforeParse.AddRange(list.OrderBy(l => l.Index).Select( l => l.Action));
+                }
+
+                var @after = State?.AfterParseActions;
+                if (@after?.TryGetValue(parser.Name, out var list2) ?? false)
+                {
+                    events.AfterParse.AddRange(list2.OrderBy(l => l.Index).Select(l => l.Action));
+                }
+
+                events.AfterParse.Add(new Action<AfterArgs<TToken>>((args) =>
+                {
+                    if (args.ParserResult.WasSuccessful)
                     {
-                        if (args.Valid)
+                        var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
+                        var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
+                        if (consumedPosition > args.GlobalState.LastConsumedPosition)
                         {
-                            action(args);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!updateState)
-                    {
-                        events.HasAfter = false;
-                    }
-                    else
-                    {
-                        if (args.ParserResult.WasSuccessful)
-                        {
-                            var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
-                            var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
-                            if (consumedPosition > args.GlobalState.LastConsumedPosition)
+                            args.GlobalState.LastConsumedPosition = consumedPosition;
+
+                            lock (Options.SyncLock)
                             {
-                                args.GlobalState.LastConsumedPosition = consumedPosition;
-
                                 if (Options.FullErrorReporting)
                                 {
                                     args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
                                 }
-
-                                if (args.GlobalState.UpdateHandler != null)
-                                {
-                                    args.GlobalState.UpdateHandler(true);
-                                }
                             }
-                        }
-                        else
-                        {
-                            if (args.Input.Position > args.GlobalState.LastFailedPosition)
+
+                            if (args.GlobalState.UpdateHandler != null)
                             {
-                                args.GlobalState.LastFailedPosition = args.Input.Position;
-                                args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
-
-                                if (args.GlobalState.UpdateHandler != null)
-                                {
-                                    args.GlobalState.UpdateHandler(false);
-                                }
+                                args.GlobalState.UpdateHandler(true);
                             }
                         }
-                        args.ParserCallStack.Top.Result = args.ParserResult;
                     }
-                }
-            }));
+                    else
+                    {
+                        if (args.Input.Position > args.GlobalState.LastFailedPosition)
+                        {
+                            args.GlobalState.LastFailedPosition = args.Input.Position;
+                            args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
+
+                            if (args.GlobalState.UpdateHandler != null)
+                            {
+                                args.GlobalState.UpdateHandler(false);
+                            }
+                        }
+                    }
+                    args.ParserCallStack.Top.Result = args.ParserResult;
+                }));
+                events.Inited = true;
+            };
 
             return events;
         }

@@ -1,4 +1,5 @@
-﻿using CFGToolkit.ParserCombinator.Input;
+﻿using System.Threading;
+using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator.State
 {
@@ -11,6 +12,8 @@ namespace CFGToolkit.ParserCombinator.State
         public IParser<TToken> Parser { get; set; }
 
         public IUnionResult<TToken> Result { get; set; }
+
+        public CancellationTokenSource TokenSource { get; set; }
 
         public override string ToString()
         {

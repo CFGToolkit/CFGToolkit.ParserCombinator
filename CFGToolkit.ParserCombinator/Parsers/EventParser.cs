@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
+using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -16,13 +17,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public Dictionary<string, string> Tags { get; set; }
 
+        public bool Inited { get; set; }
+
+        public Action<BeforeArgs<TToken>> Init { get; set; }
+
         public List<Action<BeforeArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeArgs<TToken>>>();
 
-        public bool HasBefore { get; set; } = true;
-
         public List<Action<AfterArgs<TToken>>> AfterParse { get; } = new List<Action<AfterArgs<TToken>>>();
-
-        public bool HasAfter { get; set; } = true;
 
         public string Name
         {
@@ -49,7 +50,19 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 watch.Start();
             }
 
-            if (HasBefore && BeforeParse.Any())
+            if (!Inited && Init != null)
+            {
+                var beforeArgs = new BeforeArgs<TToken>()
+                {
+                    GlobalState = globalState,
+                    Input = input,
+                    ParserCallStack = parserCallStack,
+                };
+
+                Init(beforeArgs);
+            }
+
+            if (BeforeParse.Count > 0)
             {
                 var beforeArgs = new BeforeArgs<TToken>()
                 {
@@ -61,12 +74,22 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 foreach (var action in BeforeParse)
                 {
                     action(beforeArgs);
+
+                    if (beforeArgs.Skip)
+                    {
+                        return UnionResultFactory.Failure(this, "Cancelled", input);
+                    }
                 };
+
+                if (beforeArgs.Skip)
+                {
+                    return UnionResultFactory.Failure(this, "Cancelled", input);
+                }
             }
 
             var result = Parser.Parse(input, globalState, parserCallStack);
 
-            if (HasAfter && AfterParse.Any())
+            if (AfterParse.Count > 0)
             {
                 var afterArgs = new AfterArgs<TToken>()
                 {

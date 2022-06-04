@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator.State
@@ -9,12 +10,17 @@ namespace CFGToolkit.ParserCombinator.State
 
         string FullCallStackText { get; }
 
-        Stack<Frame<TToken>> FullStack { get; }
+        List<Frame<TToken>> FullStack { get; }
 
         IParserCallStack<TToken> Parent { get; set; }
 
-        bool HasParser(string parserName, int depth);
+        bool IsPresent(string parserName, int depth);
 
-        IParserCallStack<TToken> Call(IParser<TToken> parser, IInputStream<TToken> input);
+        bool IsPresent(string[] parserName, int depth);
+
+        Scope<TToken> CurrentScope { get; set; }
+
+        IParserCallStack<TToken> Call(IParser<TToken> parser, IInputStream<TToken> input, CancellationTokenSource source = null, bool createLinkedTokenSource = false);
+
     }
 }

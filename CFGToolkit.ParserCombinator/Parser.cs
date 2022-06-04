@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using CFGToolkit.ParserCombinator;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
@@ -19,7 +20,7 @@ namespace CFGToolkit.ParserCombinator
             return TryParse(parser, tokens, parState);
         }
 
-        public static IUnionResult<TToken> TryParse<TToken, TValue>(this IParser<TToken, TValue> parser, List<TToken> tokens, GlobalState<TToken> parState = null) where TToken: IToken
+        public static IUnionResult<TToken> TryParse<TToken, TValue>(this IParser<TToken, TValue> parser, List<TToken> tokens, GlobalState<TToken> parState = null, CancellationTokenSource token = null) where TToken: IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
@@ -35,16 +36,16 @@ namespace CFGToolkit.ParserCombinator
 
             if (Options.Cache && state.Cache == null)
             {
-                state.Cache = new Dictionary<long, IUnionResult<TToken>>[tokens.LongCount()];
+                state.Cache = new System.Collections.Concurrent.ConcurrentDictionary<long, IUnionResult<TToken>>[tokens.LongCount()];
                 for (var i = 0; i < tokens.LongCount(); i++)
                 {
-                    state.Cache[i] = new Dictionary<long, IUnionResult<TToken>>();
+                    state.Cache[i] = new System.Collections.Concurrent.ConcurrentDictionary<long, IUnionResult<TToken>>();
                 }
             }
 
             var inputStream = new InputStream<TToken>(tokens, 0, new Dictionary<string, object>());
 
-            var parserCallStack = new ParserCallStack<TToken>(new Frame<TToken>() { Parser = parser, Input = inputStream });
+            var parserCallStack = new ParserCallStack<TToken>(new Frame<TToken>() { Parser = parser, Input = inputStream, TokenSource = token ?? new CancellationTokenSource() });
             var result = parser.Parse(inputStream, state, parserCallStack);
             result.GlobalState = state;
             result.Input = inputStream;

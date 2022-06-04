@@ -35,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
 
             var newResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
-            globalState.Cache[input.Position].Add(Id, newResult);
+            globalState.Cache[input.Position].TryAdd(Id, newResult);
             return newResult;
         }
     }

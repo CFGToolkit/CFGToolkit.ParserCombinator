@@ -10,5 +10,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         public IGlobalState<TToken> GlobalState { get; set; }
 
         public IParserCallStack<TToken> ParserCallStack { get; set; }
+
+        public bool Skip { get; set; } = false;
     }
 }

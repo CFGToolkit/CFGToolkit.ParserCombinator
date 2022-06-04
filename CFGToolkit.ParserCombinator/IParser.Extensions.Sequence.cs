@@ -5,10 +5,11 @@
     using System.Linq;
     using CFGToolkit.ParserCombinator.Input;
     using CFGToolkit.ParserCombinator.Parsers;
+    using System.Threading;
 
     public partial class Parser
     {
-        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories) where TToken : IToken
+        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params ThreadLocal<IParser<TToken>>[] parserFactories) where TToken : IToken
         {
             return Weaver.Create(new SequenceParser<TToken, TResult>(name, select, parserFactories));
         }
