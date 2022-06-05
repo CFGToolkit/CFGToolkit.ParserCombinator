@@ -16,13 +16,26 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         public Dictionary<string, string> Tags { get; set; }
 
-        public List<Action<BeforeParseArgs<TToken>>> BeforeParse { get; } = new List<Action<BeforeParseArgs<TToken>>>();
-
-        public List<Action<AfterParseArgs<TToken>>> AfterParse { get; } = new List<Action<AfterParseArgs<TToken>>>();
+        public List<Action<BeforeParseArgs<TToken>>> BeforeParse { get; private set; } 
+        
+        public List<Action<AfterParseArgs<TToken>>> AfterParse { get; private set; }
 
         public bool ShouldUpdateGlobalState { get; set; } = true;
 
         public string Name { get; set; }
+
+        public void EnableEvents()
+        {
+            if (BeforeParse == null)
+            {
+                BeforeParse = new List<Action<BeforeParseArgs<TToken>>>();
+            }
+
+            if (AfterParse == null)
+            {
+                AfterParse = new List<Action<AfterParseArgs<TToken>>>();
+            }
+        }
 
         protected abstract IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack);
 
@@ -37,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 watch.Start();
             }
 
-            if (BeforeParse.Count > 0)
+            if (BeforeParse?.Count > 0)
             {
                 var beforeArgs = new BeforeParseArgs<TToken>()
                 {
@@ -64,7 +77,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             var result = ParseInternal(input, globalState, parserCallStack);
 
-            if (AfterParse.Count > 0 || ShouldUpdateGlobalState)
+            if (AfterParse?.Count > 0 || ShouldUpdateGlobalState)
             {
                 var afterArgs = new AfterParseArgs<TToken>()
                 {
@@ -73,11 +86,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     Input = input,
                     ParserCallStack = parserCallStack,
                 };
-
-                foreach (var action in AfterParse)
+                if (AfterParse != null)
                 {
-                    action(afterArgs);
-                };
+                    foreach (var action in AfterParse)
+                    {
+                        action(afterArgs);
+                    };
+                }
 
                 if (ShouldUpdateGlobalState)
                 {

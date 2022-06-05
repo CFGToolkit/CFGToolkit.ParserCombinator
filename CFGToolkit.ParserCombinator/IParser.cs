@@ -20,5 +20,6 @@ namespace CFGToolkit.ParserCombinator
 
     public interface IParser<TToken, TResult> : IParser<TToken> where TToken : IToken
     {
+        void EnableEvents();
     }
 }
