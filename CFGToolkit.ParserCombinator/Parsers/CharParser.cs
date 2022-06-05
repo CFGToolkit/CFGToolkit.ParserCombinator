@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class CharParser : IParser<CharToken, char>
+    public class CharParser : BaseParser<CharToken, char>
     {
         private readonly Predicate<char> _predicate;
         private readonly string _description;
@@ -20,13 +19,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _token = token;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
         public string Description => _description;
 
-        public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
+        protected override IUnionResult<CharToken> ParseInternal(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
             if (input.AtEnd)
             {

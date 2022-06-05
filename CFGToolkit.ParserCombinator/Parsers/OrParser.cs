@@ -5,7 +5,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class OrParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class OrParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         private readonly IParser<TToken, TResult> _left;
         private readonly IParser<TToken, TResult> _right;
@@ -19,11 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _errorMessage = $"Both parsers failed: ({_left.Name}) and ({_right.Name})";
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var firstResult = _left.Parse(input, globalState, parserCallStack.Call(_left, input));
             var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_right, input));

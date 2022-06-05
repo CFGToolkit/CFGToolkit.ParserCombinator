@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class NotParser<TToken> : IParser<TToken, object> where TToken : IToken
+    public class NotParser<TToken> : BaseParser<TToken, object> where TToken : IToken
     {
         private readonly IParser<TToken> _parser;
 
@@ -15,11 +14,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parser = parser;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 

@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class TokenParser<TResult> : IParser<CharToken, TResult>
+    public class TokenParser<TResult> : BaseParser<CharToken, TResult>
     {
         private readonly IParser<CharToken, TResult> _parser;
 
@@ -15,11 +14,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parser = parser;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
+        protected override IUnionResult<CharToken> ParseInternal(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
             int start = input.Position;
             input = input.AdvanceWhile(token => char.IsWhiteSpace(token.Value), true, out var prefix);

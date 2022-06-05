@@ -9,7 +9,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class XOrMultipleFirstParallelParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class XOrMultipleFirstParallelParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         private readonly IParser<TToken, TResult>[] _parsers;
 
@@ -19,11 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parsers = parsers;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var results = new IUnionResult<TToken>[_parsers.Length];
             int foundIndex = -1;
@@ -64,7 +60,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (!task.IsCanceled)
                     {
-                        task.Start();
+                        task.Start(Options.TaskScheduler);
                     }
                     tasks.Add(task);
                     i++;

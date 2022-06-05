@@ -9,23 +9,19 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class SequenceParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class SequenceParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         private readonly Func<(string valueParserName, object value)[], TResult> _factory;
-        private readonly ThreadLocal<IParser<TToken>>[] _parserFactories;
+        private readonly Lazy<IParser<TToken>>[] _parserFactories;
 
-        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params ThreadLocal<IParser<TToken>>[] parserFactories)
+        public SequenceParser(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories)
         {
             Name = name;
             _factory = select;
             _parserFactories = parserFactories;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             if (_parserFactories.Length == 1)
             {

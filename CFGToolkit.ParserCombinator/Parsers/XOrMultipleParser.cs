@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class XOrMultipleParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class XOrMultipleParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         private readonly IParser<TToken, TResult>[] _parsers;
 
@@ -15,11 +14,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parsers = parsers;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             foreach (var parser in _parsers)
             {

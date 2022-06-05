@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator
         {
             if (regex == null) throw new ArgumentNullException(nameof(regex));
             regex = OptimizeRegex(regex);
-            return Weaver.Create(new RegexParser(name, regex, (value) => true, token), Options.RegexLevelReporting);
+            return new RegexParser(name, regex, (value) => true, token) { ShouldUpdateGlobalState = Options.RegexLevelReporting };
         }
 
         public static IParser<CharToken, string> RegexExt(string pattern, Func<string, bool> predicate, bool token = false)
@@ -34,7 +34,7 @@ namespace CFGToolkit.ParserCombinator
 
             var regex = OptimizeRegex(new Regex(pattern));
 
-            return Weaver.Create(new RegexParser("Pattern: " + pattern, regex, predicate, token), Options.RegexLevelReporting);
+            return new RegexParser("Pattern: " + pattern, regex, predicate, token) { ShouldUpdateGlobalState = Options.RegexLevelReporting };
         }
 
         private static Regex OptimizeRegex(Regex regex)

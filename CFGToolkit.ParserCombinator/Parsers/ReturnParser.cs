@@ -5,7 +5,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class ReturnParser<TToken, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class ReturnParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         public ReturnParser(string name, TResult value)
         {
@@ -13,19 +13,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Value = value;
         }
 
-        public string Name { get; set; }
-
         public TResult Value { get; }
 
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             return UnionResultFactory.Success(Value, input, this, position: input.Position, consumedTokens: 0);
         }
     }
 
-    public class ReturnParser<TToken, T, U> : IParser<TToken, U> where TToken : IToken
+    public class ReturnParser<TToken, T, U> : BaseParser<TToken, U> where TToken : IToken
     {
         private readonly IParser<TToken, T> _parser;
 
@@ -36,13 +32,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Value = value;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
         public U Value { get; }
 
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 

@@ -7,7 +7,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class OptionalParser<TToken, T> : IParser<TToken, IOption<T>> where TToken : IToken
+    public class OptionalParser<TToken, T> : BaseParser<TToken, IOption<T>> where TToken : IToken
     {
         private readonly IParser<TToken, T> _current;
 
@@ -18,13 +18,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Greedy = greedy;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
         public bool Greedy { get; }
 
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var results = _current.Parse(input, globalState, parserCallStack.Call(_current, input));
 

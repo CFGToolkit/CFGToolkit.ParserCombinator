@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class ExceptParser<TToken, T, TResult> : IParser<TToken, TResult> where TToken : IToken
+    public class ExceptParser<TToken, T, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
         private readonly IParser<TToken, TResult> _current;
         private readonly IParser<TToken, T> _except;
@@ -17,11 +16,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _except = except;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var result = _except.Parse(input, globalState, parserCallStack.Call(_except, input));
             if (result.WasSuccessful)

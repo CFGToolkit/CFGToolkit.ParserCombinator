@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class StringParser : IParser<CharToken, string>
+    public class StringParser : BaseParser<CharToken, string>
     {
         private readonly string _string;
         private readonly bool _token;
@@ -17,17 +16,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _token = token;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<CharToken> Parse(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
+        protected override IUnionResult<CharToken> ParseInternal(IInputStream<CharToken> input, IGlobalState<CharToken> globalState, IParserCallStack<CharToken> parserCallStack)
         {
-            if (input.AtEnd)
-            {
-                return UnionResultFactory.Failure(this, "Failed to match string. Unexpected end of input", input);
-            }
-
             int prefixLen = 0;
             if (_token)
             {

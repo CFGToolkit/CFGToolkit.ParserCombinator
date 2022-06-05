@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using CFGToolkit.ParserCombinator.Input;
+﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class CachedParser<TToken, T> : IParser<TToken, T> where TToken : IToken
+    public class CachedParser<TToken, T> : BaseParser<TToken, T> where TToken : IToken
     {
         private readonly IParser<TToken, T> _parser;
 
@@ -16,13 +15,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Id = id;
         }
 
-        public string Name { get; set; }
-
         public long Id { get; set; }
 
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             if (input.AtEnd)
             {

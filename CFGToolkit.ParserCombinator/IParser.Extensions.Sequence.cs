@@ -9,9 +9,9 @@
 
     public partial class Parser
     {
-        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params ThreadLocal<IParser<TToken>>[] parserFactories) where TToken : IToken
+        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories) where TToken : IToken
         {
-            return Weaver.Create(new SequenceParser<TToken, TResult>(name, select, parserFactories));
+            return new SequenceParser<TToken, TResult>(name, select, parserFactories);
         }
 
         public static IParser<TToken, IEnumerable<T>> DelimitedBy<TToken, T, U>(this IParser<TToken, T> parser, IParser<TToken, U> delimiter) where TToken : IToken
@@ -25,12 +25,12 @@
             if (delimiter == null) throw new ArgumentNullException(nameof(delimiter));
 
 
-            return Weaver.Create(from head in parser.Once()
+            return from head in parser.Once()
                                                    from tail in
                                                        (from separator in delimiter
                                                         from item in parser
                                                         select item).Repeat(minimumCount - 1, maximumCount - 1)
-                                                   select head.Concat(tail));
+                                                   select head.Concat(tail);
         }
 
         public static IParser<TToken, List<T>> Repeat<TToken, T>(this IParser<TToken, T> parser, int count, bool greedy = true) where TToken : IToken
@@ -44,7 +44,7 @@
 
             string name = $"{ parser.Name } repeated " + (minimumCount.HasValue ? $" min = {minimumCount} " : " ") + (maximumCount.HasValue ? $" max = {maximumCount}" : "");
 
-            return Weaver.Create(new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy));
+            return new RepeatParser<TToken, T>(name, parser, minimumCount, maximumCount, greedy);
         }
     }
 }

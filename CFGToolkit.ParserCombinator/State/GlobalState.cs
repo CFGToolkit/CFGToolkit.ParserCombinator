@@ -11,16 +11,6 @@ namespace CFGToolkit.ParserCombinator.State
         {
         }
 
-        public ConcurrentDictionary<string, ConcurrentBag<BeforeParseAction<TToken>>> BeforeParseActions
-        {
-            get; set;
-        }
-
-        public ConcurrentDictionary<string, ConcurrentBag<AfterParseAction<TToken>>> AfterParseActions
-        {
-            get; set;
-        }
-
         public int LastConsumedPosition { get; set; } = -1;
 
         public List<Frame<TToken>> LastConsumedCallStack { get; set; }

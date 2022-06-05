@@ -7,10 +7,6 @@ namespace CFGToolkit.ParserCombinator.State
 {
     public interface IGlobalState<TToken> where TToken : IToken
     {
-        ConcurrentDictionary<string, ConcurrentBag<BeforeParseAction<TToken>>> BeforeParseActions { get; set; }
-
-        ConcurrentDictionary<string, ConcurrentBag<AfterParseAction<TToken>>> AfterParseActions { get; set; }
-
         int LastConsumedPosition { get; set; }
 
         int LastFailedPosition { get; set; }

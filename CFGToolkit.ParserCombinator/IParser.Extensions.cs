@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers;
-using CFGToolkit.ParserCombinator.Weavers;
 
 namespace CFGToolkit.ParserCombinator
 {
     public static partial class Parser
     {
-        public static IParserWeaver Weaver { get; set; } = new EventParserWeaver();
-
         public static IParser<TToken, TResult> Except<TToken, T, TResult>(this IParser<TToken, TResult> parser, IParser<TToken, T> except) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
             if (except == null) throw new ArgumentNullException(nameof(except));
 
             string name = "Except: " + parser.Name + ", " + except;
-            return Weaver.Create(new ExceptParser<TToken, T, TResult>(name, parser, except));
+            return new ExceptParser<TToken, T, TResult>(name, parser, except);
         }
 
         public static IParser<CharToken, char> Char(Predicate<char> predicate, string description, bool token = false)
@@ -24,7 +21,7 @@ namespace CFGToolkit.ParserCombinator
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             string name = "Char: " + description;
-            return Weaver.Create(new CharParser(name, predicate, description, token), Options.CharLevelReporting);
+            return new CharParser(name, predicate, description, token) { ShouldUpdateGlobalState = Options.CharLevelReporting };
         }
 
         public static IParser<CharToken, char> Char(char c, bool token = false)
@@ -76,17 +73,17 @@ namespace CFGToolkit.ParserCombinator
             if (@string == null) throw new ArgumentNullException(nameof(@string));
 
             string name = "String: " + @string;
-            return Weaver.Create(new StringParser(name, @string, token), Options.StringLevelReporting);
+            return new StringParser(name, @string, token);
         }
 
-        public static IParser<CharToken, List<char>> WhiteSpaces = Weaver.Create(new WhitespacesParser("Whitespaces"));
+        public static IParser<CharToken, List<char>> WhiteSpaces = new WhitespacesParser("Whitespaces");
 
         public static IParser<TToken, object> Not<TToken, T>(this IParser<TToken, T> parser) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             string name = "Not: " + parser.Name;
-            return Weaver.Create(new NotParser<TToken>(name, parser));
+            return new NotParser<TToken>(name, parser);
         }
 
         public static IParser<TToken, U> Then<TToken, T, U>(this IParser<TToken, T> first, Func<T, IParser<TToken, U>> second) where TToken : IToken
@@ -94,7 +91,7 @@ namespace CFGToolkit.ParserCombinator
             if (first == null) throw new ArgumentNullException(nameof(first));
             if (second == null) throw new ArgumentNullException(nameof(second));
 
-            return Weaver.Create(new ThenFuncPParser<TToken, T, U>("Then: " + first + " => func parser", first, second));
+            return new ThenFuncPParser<TToken, T, U>("Then: " + first + " => func parser", first, second);
         }
 
         public static IParser<TToken, U> Then<TToken, T, U>(this IParser<TToken, T> first, Func<T, U> second) where TToken : IToken
@@ -102,7 +99,7 @@ namespace CFGToolkit.ParserCombinator
             if (first == null) throw new ArgumentNullException(nameof(first));
             if (second == null) throw new ArgumentNullException(nameof(second));
 
-            return Weaver.Create(new ThenFuncParser<TToken, T, U>("Then: " + first.Name + " => func", first, second));
+            return new ThenFuncParser<TToken, T, U>("Then: " + first.Name + " => func", first, second);
         }
 
         public static IParser<TToken, List<T>> Many<TToken, T>(this IParser<TToken, T> parser, bool greedy = true) where TToken : IToken
@@ -117,32 +114,32 @@ namespace CFGToolkit.ParserCombinator
             if (parser == null) throw new ArgumentNullException(nameof(parser));
             if (convert == null) throw new ArgumentNullException(nameof(convert));
 
-            return Weaver.Create(parser.Then(t => convert(t)).Named("Select: " + parser.Name));
+            return parser.Then(t => convert(t)).Named("Select: " + parser.Name);
         }
 
         public static IParser<TToken, TBase> Cast<TToken, TBase, TDerive>(this IParser<TToken, TDerive> parser) where TDerive : TBase where TBase : class where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Weaver.Create(new CastParser<TToken, TBase, TDerive>("Cast: " + typeof(TDerive).Name + "=>" + typeof(TBase).Name, parser));
+            return new CastParser<TToken, TBase, TDerive>("Cast: " + typeof(TDerive).Name + "=>" + typeof(TBase).Name, parser);
         }
 
         public static IParser<CharToken, T> TokenWithoutNewLines<T>(this IParser<CharToken, T> parser)
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Weaver.Create(
+            return 
                 (from leading in Char(c => c != '\r' && c != '\n' && char.IsWhiteSpace(c), "Whitespace without new lines").Many()
                  from item in parser
                  from trailing in Char(c => c != '\r' && c != '\n' && char.IsWhiteSpace(c), "Whitespace without new lines").Many()
-                 select item).Named($"TokenWithoutNewLines: ({parser})"));
+                 select item).Named($"TokenWithoutNewLines: ({parser})");
         }
 
         public static IParser<CharToken, T> Token<T>(this IParser<CharToken, T> parser)
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Weaver.Create(new TokenParser<T>("Token: " + parser.Name, parser));
+            return new TokenParser<T>("Token: " + parser.Name, parser);
         }
 
         public static IParser<TToken, T> Cached<TToken, T>(this IParser<TToken, T> parser, long id) where TToken : IToken
@@ -158,7 +155,7 @@ namespace CFGToolkit.ParserCombinator
 
         public static IParser<CharToken, string> Text(this IParser<CharToken, List<char>> characters)
         {
-            return Weaver.Create(characters.Then(chs => new string(chs.ToArray())).Named("Text"));
+            return characters.Then(chs => new string(chs.ToArray())).Named("Text");
         }
 
         public static IParser<CharToken, string> Text(this IParser<CharToken, string> parser)
@@ -172,18 +169,18 @@ namespace CFGToolkit.ParserCombinator
             if (second == null) throw new ArgumentNullException(nameof(second));
 
             string name = "(" + first.Name + ") or (" + second.Name + ")";
-            return Weaver.Create(new OrParser<TToken, TResult>(name, first, second));
+            return new OrParser<TToken, TResult>(name, first, second);
         }
 
         public static IParser<TToken, T> Or<TToken, T>(string name, bool parallel, params IParser<TToken, T>[] parsers) where TToken : IToken
         {
             if (Options.MultiThreading && parallel)
             {
-                return Weaver.Create(new OrMultipleParallelParser<TToken, T>(name, parsers));
+                return new OrMultipleParallelParser<TToken, T>(name, parsers);
             }
             else
             {
-                return Weaver.Create(new OrMultipleParser<TToken, T>(name, parsers));
+                return new OrMultipleParser<TToken, T>(name, parsers);
             }
         }
 
@@ -193,7 +190,7 @@ namespace CFGToolkit.ParserCombinator
             if (second == null) throw new ArgumentNullException(nameof(second));
 
             string name = first.Name + " xor " + second.Name;
-            return Weaver.Create(new XOrParser<TToken, T>(name, first, second));
+            return new XOrParser<TToken, T>(name, first, second);
         }
 
         public static IParser<TToken, T> XOr<TToken, T>(string name, XOrParallelMode mode, params IParser<TToken, T>[] parsers) where TToken : IToken
@@ -202,16 +199,16 @@ namespace CFGToolkit.ParserCombinator
             {
                 if (mode == XOrParallelMode.First)
                 {
-                    return Weaver.Create(new XOrMultipleFirstParallelParser<TToken, T>(name, parsers));
+                    return new XOrMultipleFirstParallelParser<TToken, T>(name, parsers);
                 }
                 else
                 {
-                    return Weaver.Create(new XOrMultipleParallelParser<TToken, T>(name, parsers));
+                    return new XOrMultipleParallelParser<TToken, T>(name, parsers);
                 }
             }
             else
             {
-                return Weaver.Create(new XOrMultipleParser<TToken, T>(name, parsers));
+                return new XOrMultipleParser<TToken, T>(name, parsers);
             }
         }
 
@@ -245,13 +242,13 @@ namespace CFGToolkit.ParserCombinator
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
             string name = "Once: (" + parser.Name + ")";
-            return Weaver.Create(new OnceParser<TToken, T>(name, parser));
+            return new OnceParser<TToken, T>(name, parser);
         }
 
         public static IParser<TToken, T> Return<TToken, T>(T value) where TToken : IToken
         {
             string name = "Return: " + value;
-            return Weaver.Create(new ReturnParser<TToken, T>(name, value));
+            return new ReturnParser<TToken, T>(name, value);
         }
 
         public static IParser<CharToken, T> Return<T>(T value)
@@ -262,7 +259,7 @@ namespace CFGToolkit.ParserCombinator
         public static IParser<TToken, U> Return<TToken, T, U>(this IParser<TToken, T> parser, U value) where TToken : IToken
         {
             string name = "Return: " + value;
-            return Weaver.Create(new ReturnParser<TToken, T, U>(name, parser, value));
+            return new ReturnParser<TToken, T, U>(name, parser, value);
         }
 
         public static IParser<TToken, T> Where<TToken, T>(this IParser<TToken, T> parser, Func<T, bool> predicate) where TToken : IToken
@@ -271,7 +268,7 @@ namespace CFGToolkit.ParserCombinator
             if (predicate == null) throw new ArgumentNullException(nameof(predicate));
 
             string name = parser.Name + " where " + predicate;
-            return Weaver.Create(new WhereParser<TToken, T>(name, parser, predicate));
+            return new WhereParser<TToken, T>(name, parser, predicate);
         }
 
         public static IParser<TToken, V> SelectMany<TToken, T, U, V>(
@@ -283,14 +280,14 @@ namespace CFGToolkit.ParserCombinator
             if (selector == null) throw new ArgumentNullException(nameof(selector));
             if (projector == null) throw new ArgumentNullException(nameof(projector));
 
-            return Weaver.Create(new SelectManyParser<TToken, T, U, V>(parser, selector, projector));
+            return new SelectManyParser<TToken, T, U, V>(parser, selector, projector);
         }
 
         public static IParser<TToken, T> End<TToken, T>(this IParser<TToken, T> parser) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
 
-            return Weaver.Create(new EndParser<TToken, T>("End: " + parser.Name, parser));
+            return new EndParser<TToken, T>("End: " + parser.Name, parser);
         }
     }
 }

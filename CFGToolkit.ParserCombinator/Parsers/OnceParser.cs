@@ -5,7 +5,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class OnceParser<TToken, TResult> : IParser<TToken, List<TResult>> where TToken : IToken
+    public class OnceParser<TToken, TResult> : BaseParser<TToken, List<TResult>> where TToken : IToken
     {
         private readonly IParser<TToken, TResult> _parser;
 
@@ -15,11 +15,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parser = parser;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 

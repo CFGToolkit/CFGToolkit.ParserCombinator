@@ -6,7 +6,7 @@ using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
-    public class SelectManyParser<TToken, T, U, V> : IParser<TToken, V> where TToken : IToken
+    public class SelectManyParser<TToken, T, U, V> : BaseParser<TToken, V> where TToken : IToken
     {
         private readonly IParser<TToken, T> _parser;
         private readonly Func<T, IParser<TToken, U>> _selector;
@@ -19,11 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _projector = projector;
         }
 
-        public string Name { get; set; }
-
-        public Dictionary<string, string> Tags { get; set; }
-
-        public IUnionResult<TToken> Parse(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
+        protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var firstResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 

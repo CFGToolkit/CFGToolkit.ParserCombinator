@@ -1,4 +1,6 @@
-﻿namespace CFGToolkit.ParserCombinator
+﻿using System.Threading.Tasks;
+
+namespace CFGToolkit.ParserCombinator
 {
     public class Options
     {
@@ -17,5 +19,7 @@
         public static bool MultiThreading { get; set; } = false;
 
         public static object SyncLock { get; set; } = new object();
+
+        public static TaskScheduler TaskScheduler { get; set; } = TaskScheduler.Default;
     }
 }

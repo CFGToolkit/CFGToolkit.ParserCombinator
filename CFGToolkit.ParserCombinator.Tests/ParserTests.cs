@@ -195,6 +195,41 @@ parameter_identifier2[no-token] ::= identifier
         }
 
         [Fact]
+        public void Empty()
+        {
+            var parser = Parser.String(string.Empty).Tag("t1", "value");
+
+            var result = Parser.TryParse(parser, "");
+
+            Assert.True(result.WasSuccessful);
+            Assert.True(result.Values[0].EmptyMatch);
+            Assert.Equal(0, result.Values[0].ConsumedTokens);
+        }
+
+        [Fact]
+        public void Empty2()
+        {
+            var parser =
+            (from _0 in Parser.String("module", true).Text()
+             select _0)
+        .XOr((from _0 in Parser.String("macromodule", true).Text()
+              select _0)
+        .XOr((from _0 in Parser.Return(string.Empty)
+              select _0)));
+
+            var parser2 =
+                from _0 in parser
+                from _1 in Parser.String("b")
+                select _1;
+
+            var result = Parser.TryParse(parser2, "b");
+
+            Assert.True(result.WasSuccessful);
+            Assert.False(result.Values[0].EmptyMatch);
+            Assert.Equal(1, result.Values[0].ConsumedTokens);
+        }
+
+        [Fact]
         public void Tag2Test()
         {
             var parser = Parser.String("test").Tag("t1", "value").Tag("t2", "value2");
