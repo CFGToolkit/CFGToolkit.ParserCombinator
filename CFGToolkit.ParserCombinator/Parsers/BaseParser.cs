@@ -103,7 +103,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (Options.Telemetry)
             {
-                watch.Stop();
+                watch?.Stop();
                 Telemetry.IncreaseTime(Name, watch.ElapsedMilliseconds);
             }
             return result;
