@@ -11,9 +11,11 @@ namespace CFGToolkit.ParserCombinator.State
 
         int LastFailedPosition { get; set; }
 
-        List<Frame<TToken>> LastConsumedCallStack { get; set; }
+        Lazy<List<Frame<TToken>>> LastConsumedCallStack { get; set; }
 
-        IParser<TToken> LastFailedParser { get; set; }
+        ConcurrentBag<Lazy<List<Frame<TToken>>>> LastFailedCallStacks { get; set; }
+
+        List<List<Frame<TToken>>> GetUniqueFailedCallStacks();
 
         Action<bool> UpdateHandler { get; set; }
 

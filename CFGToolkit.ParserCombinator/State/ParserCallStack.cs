@@ -9,41 +9,32 @@ namespace CFGToolkit.ParserCombinator.State
 {
     public class ParserCallStack<TToken> : IParserCallStack<TToken> where TToken : IToken
     {
-        private List<Frame<TToken>> _fullCallStack;
-
         public ParserCallStack(Frame<TToken> top)
         {
             Top = top;
+
+            FullStack = new Lazy<List<Frame<TToken>>>(() => {
+
+                var result = new List<Frame<TToken>>();
+                if (Parent != null)
+                {
+                    result.AddRange(Parent.FullStack.Value);
+                }
+                result.Add(Top);
+                return result;
+
+            });
         }
 
         public Frame<TToken> Top { get; }
 
-        public List<Frame<TToken>> FullStack
-        {
-            get
-            {
-                if (_fullCallStack == null)
-                {
-                    if (Parent != null)
-                    {
-                        _fullCallStack = new List<Frame<TToken>>(Parent.FullStack);
-                    }
-                    else
-                    {
-                        _fullCallStack = new List<Frame<TToken>>();
-                    }
-
-                    _fullCallStack.Add(Top);
-                }
-                return _fullCallStack;
-            }
-        }
+        public Lazy<List<Frame<TToken>>> FullStack { get; private set; }
 
         public string FullCallStackText
         {
             get
             {
-                return string.Join(Environment.NewLine + "^" + Environment.NewLine, FullStack.Select(o => o.Parser.Name));
+                return string.Join(Environment.NewLine + "^" + Environment.NewLine, FullStack.Value.Select(o => o.Parser.Name));
             }
         }
 

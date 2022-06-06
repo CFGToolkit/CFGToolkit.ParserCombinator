@@ -118,33 +118,37 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 if (consumedPosition > args.GlobalState.LastConsumedPosition)
                 {
                     args.GlobalState.LastConsumedPosition = consumedPosition;
-
-                    lock (Options.SyncLock)
+                    if (Options.FullErrorReporting)
                     {
-                        if (Options.FullErrorReporting)
-                        {
-                            args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
-                        }
-                    }
-
-                    if (args.GlobalState.UpdateHandler != null)
-                    {
-                        args.GlobalState.UpdateHandler(true);
+                        args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
                     }
                 }
             }
             else
             {
-                if (args.Input.Position > args.GlobalState.LastFailedPosition)
+                if (args.Input.Position == args.GlobalState.LastFailedPosition)
+                {
+                    if (Options.FullErrorReporting)
+                    {
+                        args.GlobalState.LastFailedCallStacks.Add(args.ParserCallStack.FullStack);
+                    }
+
+                }
+                else if (args.Input.Position > args.GlobalState.LastFailedPosition)
                 {
                     args.GlobalState.LastFailedPosition = args.Input.Position;
-                    args.GlobalState.LastFailedParser = args.ParserCallStack.Top.Parser;
 
-                    if (args.GlobalState.UpdateHandler != null)
+                    if (Options.FullErrorReporting)
                     {
-                        args.GlobalState.UpdateHandler(false);
+                        args.GlobalState.LastFailedCallStacks.Clear();
+                        args.GlobalState.LastFailedCallStacks.Add(args.ParserCallStack.FullStack);
                     }
                 }
+            }
+
+            if (args.GlobalState.UpdateHandler != null)
+            {
+                args.GlobalState.UpdateHandler(args.ParserResult.WasSuccessful);
             }
             args.ParserCallStack.Top.Result = args.ParserResult;
         }

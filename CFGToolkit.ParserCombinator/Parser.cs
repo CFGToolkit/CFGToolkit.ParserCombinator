@@ -73,7 +73,7 @@ namespace CFGToolkit.ParserCombinator
                 return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
 
-            throw new ParserException("Failed to parse. Last consumed position: " + result.GlobalState.LastConsumedPosition);
+            throw new ParserException("Failed to parse", result);
         }
     }
 }

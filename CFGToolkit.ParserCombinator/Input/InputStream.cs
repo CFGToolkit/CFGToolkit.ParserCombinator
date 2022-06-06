@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using CFGToolkit.ParserCombinator;
 
 namespace CFGToolkit.ParserCombinator.Input
 {
@@ -89,11 +87,6 @@ namespace CFGToolkit.ParserCombinator.Input
             }
         }
 
-        public override string ToString()
-        {
-            return "Position: " + Position;
-        }
-
         public override bool Equals(object obj)
         {
             return Equals(obj as IInputStream<TToken>);
@@ -124,19 +117,6 @@ namespace CFGToolkit.ParserCombinator.Input
         public static bool operator !=(InputStream<TToken> left, InputStream<TToken> right)
         {
             return !Equals(left, right);
-        }
-    }
-
-    public static class InputStreamExtensions
-    {
-        public static string GetText(this IInputStream<CharToken> stream)
-        {
-            if (!stream.Attributes.ContainsKey("txt"))
-            {
-                stream.Attributes["txt"] = string.Join(string.Empty, stream.Tokens.Select(t => t.Value));
-            }
-
-            return stream.Attributes["txt"].ToString();
         }
     }
 }

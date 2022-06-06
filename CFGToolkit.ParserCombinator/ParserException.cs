@@ -1,4 +1,5 @@
 ﻿using System;
+using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator
 {
@@ -8,6 +9,14 @@ namespace CFGToolkit.ParserCombinator
 
         public ParserException(string message) : base(message) { }
 
+
+        public ParserException(string message, IUnionResult<CharToken> result) : base(message)
+        {
+            Result = result;
+        }
+
         public ParserException(string message, Exception innerException) : base(message, innerException) { }
+
+        public IUnionResult<CharToken> Result { get; }
     }
 }
