@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator.Values
@@ -9,6 +10,7 @@ namespace CFGToolkit.ParserCombinator.Values
         {
             return new UnionResult<TToken>(typeof(TResult))
             {
+                IsSuccessful = true,
                 Parser = parser,
                 Values = new List<IUnionResultValue<TToken>>
                 {
@@ -18,6 +20,7 @@ namespace CFGToolkit.ParserCombinator.Values
                         Position = position,
                         Reminder = remainder,
                         ConsumedTokens = consumedTokens,
+                        IsSuccessful = true
                     }
                 },
             };
@@ -32,6 +35,7 @@ namespace CFGToolkit.ParserCombinator.Values
         {
             return new UnionResult<TToken>(typeof(TResult))
             {
+                IsSuccessful = true,
                 Parser = parser,
                 Values = values,
             };
@@ -41,19 +45,20 @@ namespace CFGToolkit.ParserCombinator.Values
         {
             return new UnionResult<TToken>(typeof(TResult))
             {
+                IsSuccessful = true,
                 Parser = parser,
                 Values = value.Values,
             };
         }
 
-        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser, string errorMessage, IInputStream<TToken> input) where TToken : IToken
+        public static UnionResult<TToken> Failure<TToken, TResult>(IParser<TToken, TResult> parser,  string errorMessage, int maxConsumed, int startPosition) where TToken : IToken
         {
             return new UnionResult<TToken>(typeof(TResult))
             {
+                IsSuccessful = false,
                 Parser = parser,
                 ErrorMessage = errorMessage,
-                Input = input,
-                Values = null
+                Values = new List<IUnionResultValue<TToken>> { new UnionResultValue<TToken>(typeof(TResult)) { ConsumedTokens = maxConsumed, IsSuccessful = false, Position = startPosition } }
             };
         }
     }

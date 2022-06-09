@@ -45,7 +45,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                         results[intIndex] = result;
 
-                        if (result.WasSuccessful)
+                        if (result.IsSuccessful)
                         {
                             success = true;
                             foundIndex = intIndex;
@@ -68,21 +68,21 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 var x = WaitHandle.WaitAny(new WaitHandle[] { cancellationSource.Token.WaitHandle, eventSuccess, all.WaitHandle });
 
-                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.WasSuccessful) : null;
+                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.IsSuccessful) : null;
                 if (found != null)
                 {
                     return UnionResultFactory.Success(this, found);
                 }
-                return UnionResultFactory.Failure(this, "Parser failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", results.Max(result => result.MaxConsumed), input.Position);
             }
             catch (OperationCanceledException ex)
             {
-                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.WasSuccessful) : null;
+                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.IsSuccessful) : null;
                 if (found != null)
                 {
                     return UnionResultFactory.Success(this, found);
                 }
-                return UnionResultFactory.Failure(this, "Parser failed (cancelled)", input);
+                return UnionResultFactory.Failure(this, "Parser failed (cancelled)", results.Max(result => result.MaxConsumed), input.Position);
             }
         }
     }

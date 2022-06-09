@@ -18,9 +18,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
-            if (result.WasSuccessful)
+            if (result.IsSuccessful)
             {
-                return UnionResultFactory.Failure(this, "Parser matched unexpectedly", input);
+                return UnionResultFactory.Failure(this, "Parser matched unexpectedly", result.MaxConsumed, input.Position);
             }
 
             return UnionResultFactory.Success(null, input, this, input.Position, consumedTokens: 0);

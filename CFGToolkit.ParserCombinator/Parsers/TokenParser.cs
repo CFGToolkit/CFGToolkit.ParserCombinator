@@ -21,7 +21,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
-            if (result.WasSuccessful)
+            if (result.IsSuccessful)
             {
                 foreach (var value in result.Values)
                 {
@@ -32,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                 return UnionResultFactory.Success(this, result);
             }
-            return UnionResultFactory.Failure(this, "Failed to parse", input);
+            return UnionResultFactory.Failure(this, "Failed to parse", result.MaxConsumed, input.Position);
         }
     }
 }

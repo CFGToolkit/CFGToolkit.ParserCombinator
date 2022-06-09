@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
@@ -21,7 +22,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             foreach (var parser in _parsers)
             {
                 var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
-                if (result.WasSuccessful)
+                if (result.IsSuccessful)
                 {
                     if (fullResults == null)
                     {
@@ -32,6 +33,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         fullResults.AddRange(result.Values);
                     }
                 }
+                else
+                {
+                    if (!parserCallStack.Top.ShouldContinue)
+                    {
+                        break;
+                    }
+                }
             }
 
             if (fullResults != null)
@@ -39,7 +47,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 return UnionResultFactory.Success(this, fullResults);
             }
 
-            return UnionResultFactory.Failure(this, "Parser failed", input);
+            return UnionResultFactory.Failure(this, "Parser failed", 0, input.Position);
         }
     }
 }

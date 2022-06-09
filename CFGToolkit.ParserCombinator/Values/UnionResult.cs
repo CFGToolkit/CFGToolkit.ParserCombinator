@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 
@@ -13,7 +14,21 @@ namespace CFGToolkit.ParserCombinator.Values
             ValueType = valueType;
         }
 
-        public List<IUnionResultValue<TToken>> Values { get; set; }
+        private List<IUnionResultValue<TToken>> _values;
+
+        public List<IUnionResultValue<TToken>> Values
+        {
+            get
+            {
+                return _values;
+            }
+
+            set
+            {
+                _values = value;
+                _maxConsumed = null;
+            }
+        }
 
         public Type ValueType
         {
@@ -25,18 +40,38 @@ namespace CFGToolkit.ParserCombinator.Values
 
         public IGlobalState<TToken> GlobalState { get; set; }
 
-        public bool WasSuccessful
+
+        public bool _isSuccessful = true;
+
+        public bool IsSuccessful
         {
             get
             {
+                return Values?.Count > 0 && _isSuccessful;
+            }
+            set
+            {
+                _isSuccessful = value;
+            }
+        }
 
-                if (Values == null || Values.Count == 0) return false;
 
-                return true;
+        private int? _maxConsumed = null;
+
+        public int MaxConsumed
+        {
+            get
+            {
+                if (_maxConsumed == null)
+                {
+                    _maxConsumed = Values != null && Values.Count > 0 ? Values.Max(v => v.ConsumedTokens) : 0;
+                }
+                return _maxConsumed.Value;
             }
         }
 
         public IInputStream<TToken> Input { get; set; }
+
         public string ErrorMessage { get; internal set; }
     }
 }

@@ -12,5 +12,7 @@ namespace CFGToolkit.ParserCombinator.Parsers.Graphs
         public int Depth { get; set; }
 
         public bool IsLeaf { get; set; }
+
+        public bool IsSuccess { get; set; }
     }
 }

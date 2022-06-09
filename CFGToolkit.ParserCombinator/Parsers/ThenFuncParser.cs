@@ -22,7 +22,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var firstResult = _first.Parse(input, globalState, parserCallStack.Call(_first, input));
 
-            if (firstResult.WasSuccessful)
+            if (firstResult.IsSuccessful)
             {
                 var values = new List<IUnionResultValue<TToken>>();
 
@@ -41,7 +41,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, "Parser first failed", input);
+                return UnionResultFactory.Failure(this, "Parser first failed", firstResult.MaxConsumed, input.Position);
             }
         }
     }

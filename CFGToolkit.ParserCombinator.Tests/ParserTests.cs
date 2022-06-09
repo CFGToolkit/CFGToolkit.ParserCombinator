@@ -145,7 +145,7 @@ parameter_identifier2[no-token] ::= identifier
 
             var result = Parser.TryParse(parser, "    module    ");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
         }
 
         [Fact]
@@ -157,7 +157,7 @@ parameter_identifier2[no-token] ::= identifier
                 select _0;
             var result = Parser.TryParse(parser, "    module    ");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
         }
 
         [Fact]
@@ -171,7 +171,7 @@ parameter_identifier2[no-token] ::= identifier
 
             var result = Parser.TryParse(parser.End(), "R * bbb");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
         }
 
         [Fact]
@@ -183,7 +183,7 @@ parameter_identifier2[no-token] ::= identifier
                 select _1;
             var result = Parser.TryParse(parser, "aaa");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
         }
 
         [Fact]
@@ -201,7 +201,7 @@ parameter_identifier2[no-token] ::= identifier
 
             var result = Parser.TryParse(parser, "");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
             Assert.True(result.Values[0].EmptyMatch);
             Assert.Equal(0, result.Values[0].ConsumedTokens);
         }
@@ -224,7 +224,7 @@ parameter_identifier2[no-token] ::= identifier
 
             var result = Parser.TryParse(parser2, "b");
 
-            Assert.True(result.WasSuccessful);
+            Assert.True(result.IsSuccessful);
             Assert.False(result.Values[0].EmptyMatch);
             Assert.Equal(1, result.Values[0].ConsumedTokens);
         }

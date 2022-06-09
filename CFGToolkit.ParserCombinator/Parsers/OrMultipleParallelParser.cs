@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CFGToolkit.ParserCombinator.Input;
@@ -20,9 +21,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
+            var results = new IUnionResult<TToken>[_parsers.Length];
+
             try
             {
-                var results = new IUnionResult<TToken>[_parsers.Length];
 
                 int i = 0;
                 var tasks = new List<Task>();
@@ -51,7 +53,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 var values = new List<IUnionResultValue<TToken>>();
                 foreach (var result in results)
                 {
-                    if (result.WasSuccessful)
+                    if (result.IsSuccessful)
                     {
                         values.AddRange(result.Values);
                     }
@@ -63,12 +65,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, "Parser failed", input);
+                    return UnionResultFactory.Failure(this, "Parser failed", results.Max(result => result?.MaxConsumed ?? 0), input.Position);
                 }
             }
             catch (Exception)
             {
-                return UnionResultFactory.Failure(this, "Parser cancelled", input);
+                return UnionResultFactory.Failure(this, "Parser cancelled", results.Max(result => result?.MaxConsumed ?? 0), input.Position);
             }
         }
     }

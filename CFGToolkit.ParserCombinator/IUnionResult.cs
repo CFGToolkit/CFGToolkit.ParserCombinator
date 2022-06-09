@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
@@ -7,7 +8,7 @@ namespace CFGToolkit.ParserCombinator
 {
     public interface IUnionResult<TToken> where TToken : IToken
     {
-        public bool WasSuccessful { get; }
+        public bool IsSuccessful { get; }
 
         IGlobalState<TToken> GlobalState { get; set; }
 
@@ -16,5 +17,7 @@ namespace CFGToolkit.ParserCombinator
         IParser<TToken> Parser { get; set; }
 
         IInputStream<TToken> Input { get; set; }
+
+        int MaxConsumed { get; }
     }
 }

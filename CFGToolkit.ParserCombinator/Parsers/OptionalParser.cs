@@ -24,7 +24,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var results = _current.Parse(input, globalState, parserCallStack.Call(_current, input));
 
-            if (results.WasSuccessful)
+            if (results.IsSuccessful)
             {
                 var successValues = results.Values;
                 var optionValues = successValues
@@ -34,13 +34,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Position = v.Position,
                         ConsumedTokens = v.ConsumedTokens,
                         Reminder = v.Reminder,
+                        IsSuccessful = true
                     });
 
                 var result = new List<IUnionResultValue<TToken>>(optionValues.Count());
 
                 if (!Greedy && !successValues.Any(item => item.ConsumedTokens == 0))
                 {
-                    result.Add(new UnionResultValue<TToken>(typeof(IOption<T>)) { Value = new None<T>(), Reminder = input, Position = input.Position, ConsumedTokens = 0 });
+                    result.Add(new UnionResultValue<TToken>(typeof(IOption<T>)) { Value = new None<T>(), Reminder = input, Position = input.Position, ConsumedTokens = 0, IsSuccessful = true });
                 }
                 result.AddRange(optionValues);
 
@@ -56,6 +57,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Value = new None<T>(),
                         Reminder = input,
                         Position = input.Position,
+                        IsSuccessful = true
                     }
                 };
 

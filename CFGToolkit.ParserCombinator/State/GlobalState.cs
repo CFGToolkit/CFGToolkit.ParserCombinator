@@ -26,7 +26,7 @@ namespace CFGToolkit.ParserCombinator.State
 
         public List<List<Frame<TToken>>> GetUniqueFailedCallStacks()
         {
-            var failed = LastFailedCallStacks.Select(f => f.Value).OrderByDescending(f => f.Count).ToList();
+            var failed = LastFailedCallStacks.Select(f => f.Value).ToList().OrderByDescending(f => f.Count).ToList();
             var result = new List<List<Frame<TToken>>>();
 
             var prefixes = new HashSet<string>();

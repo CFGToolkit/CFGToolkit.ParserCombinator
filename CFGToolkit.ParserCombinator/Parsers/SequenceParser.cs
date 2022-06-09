@@ -27,7 +27,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 var parser = _parserFactories[0].Value;
                 var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
 
-                if (result.WasSuccessful)
+                if (result.IsSuccessful)
                 {
                     var values = new List<IUnionResultValue<TToken>>(result.Values.Count);
                     foreach (var value in result.Values)
@@ -44,7 +44,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
                 else
                 {
-                    return UnionResultFactory.Failure(this, "Parser failed", input);
+                    return UnionResultFactory.Failure(this, "Parser failed", result.MaxConsumed, input.Position);
                 }
             }
 
@@ -61,16 +61,16 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
 
-                    if (!result.WasSuccessful)
+                    if (!result.IsSuccessful)
                     {
-                        return UnionResultFactory.Failure(this, $"Parser {parser.Name} was not successful", input);
+                        return UnionResultFactory.Failure(this, $"Parser {parser.Name} was not successful", result.MaxConsumed, input.Position);
                     }
                     else
                     {
                         nodes[0] = new List<TreeNode<TToken>>(result.Values.Count);
                         foreach (IUnionResultValue<TToken> item in result.Values)
                         {
-                            nodes[0].Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item });
+                            nodes[0].Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item, IsSuccess = true });
                         }
                     }
                 }
@@ -78,21 +78,30 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     nodes[i] = new List<TreeNode<TToken>>();
 
+                    int max = 0;
                     foreach (var node in nodes[i - 1])
                     {
-                        var tmp = parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(parser, node.Value.Reminder));
-                        if (tmp.Values != null)
+                        if (node.IsSuccess)
                         {
-                            foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
+                            var tmp = parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(parser, node.Value.Reminder));
+
+                            if (tmp.IsSuccessful && tmp.Values != null)
                             {
-                                nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem });
+                                foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
+                                {
+                                    nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem, IsSuccess = true });
+                                }
                             }
+                        }
+                        else
+                        {
+                            max = Math.Max(max, node.Value.ConsumedTokens);
                         }
                     }
 
                     if (nodes[i] == null || !nodes[i].Any())
                     {
-                        return UnionResultFactory.Failure(this, "Parser failed", input);
+                        return UnionResultFactory.Failure(this, "Parser failed", max, input.Position);
                     }
                 }
             }

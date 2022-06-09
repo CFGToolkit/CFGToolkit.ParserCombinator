@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var result = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
-            if (result.WasSuccessful)
+            if (result.IsSuccessful)
             {
                 var filteredValues = result.Values.Where(i => _predicate(i.GetValue<TResult>()));
 
@@ -32,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     return UnionResultFactory.Success(this, filteredValues.ToList());
                 }
 
-                return UnionResultFactory.Failure(this, "Parser failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", result.MaxConsumed, input.Position);
             }
 
             return result;

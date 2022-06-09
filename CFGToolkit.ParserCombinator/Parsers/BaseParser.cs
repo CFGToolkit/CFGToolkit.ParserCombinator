@@ -65,13 +65,13 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
                     if (beforeArgs.Skip)
                     {
-                        return UnionResultFactory.Failure(this, "Cancelled", input);
+                        return UnionResultFactory.Failure(this, "Cancelled", 0, input.Position);
                     }
                 };
 
                 if (beforeArgs.Skip)
                 {
-                    return UnionResultFactory.Failure(this, "Cancelled", input);
+                    return UnionResultFactory.Failure(this, "Cancelled", 0, input.Position);
                 }
             }
 
@@ -111,10 +111,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         private void UpdateGlobalState(AfterParseArgs<TToken> args)
         {
-            if (args.ParserResult.WasSuccessful)
+            var consumed = args.ParserResult.MaxConsumed;
+            var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
+            if (args.ParserResult.IsSuccessful)
             {
-                var consumed = args.ParserResult.Values.Max(v => v.ConsumedTokens);
-                var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
                 if (consumedPosition > args.GlobalState.LastConsumedPosition)
                 {
                     args.GlobalState.LastConsumedPosition = consumedPosition;
@@ -126,7 +126,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                if (args.Input.Position == args.GlobalState.LastFailedPosition)
+                if (consumedPosition == args.GlobalState.LastFailedPosition)
                 {
                     if (Options.FullErrorReporting)
                     {
@@ -134,9 +134,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
 
                 }
-                else if (args.Input.Position > args.GlobalState.LastFailedPosition)
+                else if (consumedPosition > args.GlobalState.LastFailedPosition)
                 {
-                    args.GlobalState.LastFailedPosition = args.Input.Position;
+                    args.GlobalState.LastFailedPosition = consumedPosition;
 
                     if (Options.FullErrorReporting)
                     {
@@ -148,7 +148,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (args.GlobalState.UpdateHandler != null)
             {
-                args.GlobalState.UpdateHandler(args.ParserResult.WasSuccessful);
+                args.GlobalState.UpdateHandler(args.ParserResult.IsSuccessful);
             }
             args.ParserCallStack.Top.Result = args.ParserResult;
         }

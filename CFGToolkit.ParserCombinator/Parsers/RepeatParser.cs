@@ -50,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 foreach (var node in Where(nodes, iteration))
                 {
                     var next = _parser.Parse(node.Value.Reminder, globalState, parserCallStack.Call(_parser, node.Value.Reminder));
-                    if (next.WasSuccessful)
+                    if (next.IsSuccessful)
                     {
                         foreach (var item in next.Values)
                         {
@@ -99,7 +99,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, "Failure", input);
+                return UnionResultFactory.Failure(this, "Failure", nodes.Count > 0 ? nodes.Max(n => n.Value.ConsumedTokens) : 0, input.Position);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
@@ -24,22 +25,22 @@ namespace CFGToolkit.ParserCombinator.Parsers
             var firstResult = _left.Parse(input, globalState, parserCallStack.Call(_left, input));
             var secondResult = _right.Parse(input, globalState, parserCallStack.Call(_right, input));
 
-            if (firstResult.WasSuccessful && secondResult.WasSuccessful)
+            if (firstResult.IsSuccessful && secondResult.IsSuccessful)
             {
                 firstResult.Values.AddRange(secondResult.Values);
                 return UnionResultFactory.Success(this, firstResult);
             }
-            if (firstResult.WasSuccessful)
+            if (firstResult.IsSuccessful)
             {
                 return UnionResultFactory.Success(this, firstResult);
             }
 
-            if (secondResult.WasSuccessful)
+            if (secondResult.IsSuccessful)
             {
                 return UnionResultFactory.Success(this, secondResult);
             }
 
-            return UnionResultFactory.Failure(this, _errorMessage, input);
+            return UnionResultFactory.Failure(this, _errorMessage, Math.Max(firstResult.MaxConsumed, secondResult.MaxConsumed), input.Position);
         }
     }
 }

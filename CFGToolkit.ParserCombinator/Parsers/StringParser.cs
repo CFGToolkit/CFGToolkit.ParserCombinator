@@ -29,7 +29,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (strLength != _string.Length)
             {
-                return UnionResultFactory.Failure(this, "Failed to match string", input);
+                return UnionResultFactory.Failure(this, "Failed to match string", strLength + prefixLen, input.Position);
             }
 
             int suffixLen = 0;

@@ -47,14 +47,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                     else
                     {
-                        return UnionResultFactory.Failure(this, "Failed to match predicate on regex", input);
+                        return UnionResultFactory.Failure(this, "Failed to match predicate on regex", match.Length + prefixLen, input.Position);
                     }
                 }
 
-                return UnionResultFactory.Failure(this, "Failed to match regex", input);
+                return UnionResultFactory.Failure(this, "Failed to match regex", prefixLen, input.Position);
             }
 
-            return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", input);
+            return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", 0, input.Position);
         }
     }
 }

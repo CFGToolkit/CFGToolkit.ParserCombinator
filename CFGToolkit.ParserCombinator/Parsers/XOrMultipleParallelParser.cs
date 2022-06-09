@@ -40,12 +40,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input, cancellationSource));
                         results[intIndex] = result;
 
-                        if (result.WasSuccessful)
+                        if (result.IsSuccessful)
                         {
                             bool prev = true;
                             for (var k = 0; k < intIndex; k++)
                             {
-                                if (results[k] == null || results[k].WasSuccessful)
+                                if (results[k] == null || results[k].IsSuccessful)
                                 {
                                     prev = false;
                                     break;
@@ -72,21 +72,21 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 }
 
                 Task.WaitAll(tasks.ToArray(), cancellationSource.Token);
-                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.WasSuccessful) : null;
+                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.IsSuccessful) : null;
                 if (found != null)
                 {
                     return UnionResultFactory.Success(this, (IUnionResult<TToken>)found);
                 }
-                return UnionResultFactory.Failure(this, "Parser failed", input);
+                return UnionResultFactory.Failure(this, "Parser failed", results.Max(result => result.MaxConsumed), input.Position);
             }
             catch (OperationCanceledException)
             {
-                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.WasSuccessful) : null;
+                var found = success ? foundIndex != -1 ? results[foundIndex] : results.FirstOrDefault(r => r != null && r.IsSuccessful) : null;
                 if (found != null)
                 {
                     return UnionResultFactory.Success(this, (IUnionResult<TToken>)found);
                 }
-                return UnionResultFactory.Failure(this, "Parser failed (cancelled)", input);
+                return UnionResultFactory.Failure(this, "Parser failed (cancelled)", results.Max(result => result.MaxConsumed), input.Position);
             }
         }
     }

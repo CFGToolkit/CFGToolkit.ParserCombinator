@@ -1,4 +1,5 @@
-﻿using CFGToolkit.ParserCombinator.Input;
+﻿using System.Linq;
+using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
 
@@ -19,9 +20,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
         protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             var result = _except.Parse(input, globalState, parserCallStack.Call(_except, input));
-            if (result.WasSuccessful)
+            if (result.IsSuccessful)
             {
-                return UnionResultFactory.Failure(this, "Unexpected success of parser: " + this, input);
+                return UnionResultFactory.Failure(this, "Unexpected success of parser: " + this, result.MaxConsumed, input.Position);
             }
             return _current.Parse(input, globalState, parserCallStack);
         }

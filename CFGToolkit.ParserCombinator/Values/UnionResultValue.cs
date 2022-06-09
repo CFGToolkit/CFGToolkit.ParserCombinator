@@ -14,6 +14,8 @@ namespace CFGToolkit.ParserCombinator.Values
 
         public int ConsumedTokens { get; set; }
 
+        public bool IsSuccessful { get; set; }
+
         public int Position { get; set; }
 
         public object Value { get; set; }

@@ -23,7 +23,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var firstResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
-            if (firstResult.WasSuccessful)
+            if (firstResult.IsSuccessful)
             {
                 var values = new List<IUnionResultValue<TToken>>();
                 foreach (var item in firstResult.Values)
@@ -31,7 +31,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     var secondParser = _selector(item.GetValue<T>());
                     var secondParserResults = secondParser.Parse(item.Reminder, globalState, parserCallStack.Call(secondParser, item.Reminder));
 
-                    if (secondParserResults.WasSuccessful)
+                    if (secondParserResults.IsSuccessful)
                     {
                         foreach (var secondItem in secondParserResults.Values)
                         {
@@ -50,7 +50,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure<TToken, V>(this, $"Parser {_parser.Name} failed in {Name} parser.", input);
+                return UnionResultFactory.Failure<TToken, V>(this, $"Parser {_parser.Name} failed in {Name} parser.", firstResult.MaxConsumed, input.Position);
             }
         }
     }

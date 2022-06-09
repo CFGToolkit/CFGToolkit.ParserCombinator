@@ -25,7 +25,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             if (input.AtEnd)
             {
-                return UnionResultFactory.Failure(this, "Failed to match char. Unexpected end of input", input);
+                return UnionResultFactory.Failure(this, "Failed to match char. Unexpected end of input", 0, input.Position);
             }
 
             int prefixLen = 0;
@@ -39,7 +39,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (strLength != 1)
             {
-                return UnionResultFactory.Failure(this, "Failed to match char predicate", input);
+                return UnionResultFactory.Failure(this, "Failed to match char predicate", prefixLen, input.Position);
             }
 
             int suffixLen = 0;

@@ -21,7 +21,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             if (input.AtEnd)
             {
-                return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", input);
+                return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", 0, input.Position);
             }
 
             if (globalState.Cache[input.Position].TryGetValue(Id, out var result))

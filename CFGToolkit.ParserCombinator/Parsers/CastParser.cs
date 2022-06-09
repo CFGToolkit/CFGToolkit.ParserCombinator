@@ -19,7 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             var firstResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
 
-            if (firstResult.WasSuccessful)
+            if (firstResult.IsSuccessful)
             {
                 var values = new List<IUnionResultValue<TToken>>();
 
@@ -37,7 +37,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
             else
             {
-                return UnionResultFactory.Failure(this, "Parser failed before casting", input);
+                return UnionResultFactory.Failure(this, "Parser failed before casting", firstResult.MaxConsumed, input.Position);
             }
         }
     }

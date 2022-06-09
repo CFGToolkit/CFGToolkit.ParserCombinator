@@ -68,7 +68,7 @@ namespace CFGToolkit.ParserCombinator
 
             var result = TryParse(parser, tokens);
 
-            if (result.WasSuccessful)
+            if (result.IsSuccessful)
             {
                 return result.Values.Select(v => v.GetValue<TValue>()).ToList();
             }
