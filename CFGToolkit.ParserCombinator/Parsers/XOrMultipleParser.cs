@@ -43,7 +43,9 @@ namespace CFGToolkit.ParserCombinator.Parsers
     {
         private readonly bool _firstMode;
         private readonly IParser<CharToken, TResult>[] _parsers;
-        private readonly Lazy<List<(int, string)>> _firstSet;
+        private readonly Lazy<(int, string)[]> _firstSet;
+        private readonly Lazy<int> _firstSetMax;
+        private const int FirstSetLimit = 10;
 
         public XOrMultipleParser(string name, bool firstMode, IParser<CharToken, TResult>[] parsers)
         {
@@ -52,7 +54,8 @@ namespace CFGToolkit.ParserCombinator.Parsers
             _parsers = parsers;
             if (firstMode)
             {
-                _firstSet = new Lazy<List<(int, string)>>(() => Tags.Where(t => t.Key.StartsWith("First:")).Select(s => (int.Parse(s.Key.Substring(6)), s.Value)).OrderByDescending(s => s.Value.Length).ToList());
+                _firstSet = new Lazy<(int, string)[] >(() => Tags.Where(t => t.Key.StartsWith("First:")).Select(s => (int.Parse(s.Key.Substring(6)), s.Value)).OrderByDescending(s => s.Value.Length).ToArray());
+                _firstSetMax = new Lazy<int>(() => _firstSet.Value.Max(f => f.Item2.Length));
             }
         }
 
@@ -60,14 +63,28 @@ namespace CFGToolkit.ParserCombinator.Parsers
         {
             if (_firstMode)
             {
-                foreach (var value in _firstSet.Value)
+                if (_firstSetMax.Value > FirstSetLimit)
                 {
-                    if (input.StartsWith(value.Item2))
+                    int index = input.StartsWith(_firstSet.Value);
+                    if (index >= 0)
                     {
-                        var parser = _parsers[value.Item1];
+                        var parser = _parsers[index];
                         return parser.Parse(input, globalState, parserCallStack.Call(parser, input));
                     }
                 }
+                else
+                {
+                    for (var i = 0; i < _firstSet.Value.Length; i++)
+                    {
+                        if (input.StartsWith(_firstSet.Value[i].Item2))
+                        {
+                            var parser = _parsers[_firstSet.Value[i].Item1];
+                            return parser.Parse(input, globalState, parserCallStack.Call(parser, input));
+                        }
+                    }
+                }
+
+                return UnionResultFactory.Failure(this, "Parser failed (first mode)", 0, input.Position);
             }
 
             int max = 0;

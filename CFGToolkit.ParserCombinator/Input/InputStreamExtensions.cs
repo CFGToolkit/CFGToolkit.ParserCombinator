@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using CFGToolkit.ParserCombinator;
 
 namespace CFGToolkit.ParserCombinator.Input
@@ -41,6 +42,56 @@ namespace CFGToolkit.ParserCombinator.Input
             }
 
             return true;
+        }
+
+
+        public static int StartsWith(this IInputStream<CharToken> stream, (int, string)[] values)
+        {
+            int postion = stream.Position;
+            if (postion == stream.Tokens.Count)
+            {
+                return -1;
+            }
+
+            int n = values.Length;
+            var failed = new bool[n];
+            int failedCounter = 0;
+
+            int j = 0;
+            while (postion < stream.Tokens.Count && failedCounter < n)
+            {
+                for (var i = 0; i < n; i++)
+                {
+                    if (failed[i])
+                    {
+                        continue;
+                    }
+
+                    if (j < values[i].Item2.Length && stream.Tokens[postion].Value != values[i].Item2[j])
+                    {
+                        failedCounter++;
+                        failed[i] = true;
+                    }
+                }
+                postion++;
+                j++;
+
+            }
+
+            if (failedCounter == n)
+            {
+                return -1;
+            }
+
+            for (var i = 0; i < failed.Length; i++)
+            {
+                if (!failed[i])
+                {
+                    return values[i].Item1;
+                }
+            }
+
+            return -1;
         }
     }
 }
