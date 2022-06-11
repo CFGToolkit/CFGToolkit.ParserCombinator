@@ -33,13 +33,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         fullResults.AddRange(result.Values);
                     }
                 }
-                else
-                {
-                    if (!parserCallStack.Top.ShouldContinue)
-                    {
-                        break;
-                    }
-                }
             }
 
             if (fullResults != null)

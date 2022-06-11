@@ -7,8 +7,6 @@ namespace CFGToolkit.ParserCombinator.State
     {
         public Frame<TToken> Parent { get; set; }
 
-        public bool ShouldContinue { get; set; } = true;
-
         public IInputStream<TToken> Input { get; set; }
 
         public IParser<TToken> Parser { get; set; }

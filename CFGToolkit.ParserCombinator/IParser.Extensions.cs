@@ -193,11 +193,30 @@ namespace CFGToolkit.ParserCombinator
             return new XOrParser<TToken, T>(name, first, second);
         }
 
-        public static IParser<TToken, T> XOr<TToken, T>(string name, XOrParallelMode mode, params IParser<TToken, T>[] parsers) where TToken : IToken
+        public static IParser<CharToken, T> XOr<T>(string name, bool first, XOrParallelMode parallelMode, params IParser<CharToken, T>[] parsers)
         {
-            if (Options.MultiThreading && (mode == XOrParallelMode.Ordered || mode == XOrParallelMode.First))
+            if (Options.MultiThreading && (parallelMode == XOrParallelMode.Ordered || parallelMode == XOrParallelMode.First))
             {
-                if (mode == XOrParallelMode.First)
+                if (parallelMode == XOrParallelMode.First)
+                {
+                    return new XOrMultipleFirstParallelParser<CharToken, T>(name, parsers);
+                }
+                else
+                {
+                    return new XOrMultipleParallelParser<CharToken, T>(name, parsers);
+                }
+            }
+            else
+            {
+                return new XOrMultipleParser<T>(name, first, parsers);
+            }
+        }
+
+        public static IParser<TToken, T> XOr<TToken, T>(string name, XOrParallelMode parallelMode, params IParser<TToken, T>[] parsers) where TToken : IToken
+        {
+            if (Options.MultiThreading && (parallelMode == XOrParallelMode.Ordered || parallelMode == XOrParallelMode.First))
+            {
+                if (parallelMode == XOrParallelMode.First)
                 {
                     return new XOrMultipleFirstParallelParser<TToken, T>(name, parsers);
                 }

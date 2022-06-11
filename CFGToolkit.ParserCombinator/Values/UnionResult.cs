@@ -62,6 +62,11 @@ namespace CFGToolkit.ParserCombinator.Values
         {
             get
             {
+                if (!Options.FullErrorReporting)
+                {
+                    return 0;
+                }
+
                 if (_maxConsumed == null)
                 {
                     _maxConsumed = Values != null && Values.Count > 0 ? Values.Max(v => v.ConsumedTokens) : 0;

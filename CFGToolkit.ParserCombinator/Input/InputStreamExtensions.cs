@@ -19,5 +19,28 @@ namespace CFGToolkit.ParserCombinator.Input
         {
             return string.Join(string.Empty, stream.Tokens.Skip(position ?? stream.Position).Select(t => t.Value));
         }
+
+        public static bool StartsWith(this IInputStream<CharToken> stream, string value)
+        {
+            int postion = stream.Position;
+            int strPos = 0;
+
+            if (postion == stream.Tokens.Count)
+            {
+                return false;
+            }
+
+            while (strPos < value.Length && postion < stream.Tokens.Count)
+            {
+                if (stream.Tokens[postion].Value != value[strPos])
+                {
+                    return false;
+                }
+                postion++;
+                strPos++;
+            }
+
+            return true;
+        }
     }
 }

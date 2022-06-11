@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 
 namespace CFGToolkit.ParserCombinator.Values
@@ -58,7 +57,7 @@ namespace CFGToolkit.ParserCombinator.Values
                 IsSuccessful = false,
                 Parser = parser,
                 ErrorMessage = errorMessage,
-                Values = new List<IUnionResultValue<TToken>> { new UnionResultValue<TToken>(typeof(TResult)) { ConsumedTokens = maxConsumed, IsSuccessful = false, Position = startPosition } }
+                Values = Options.FullErrorReporting ? new List<IUnionResultValue<TToken>> { new UnionResultValue<TToken>(typeof(TResult)) { ConsumedTokens = maxConsumed, IsSuccessful = false, Position = startPosition } } : null
             };
         }
     }

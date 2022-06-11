@@ -95,7 +95,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         }
                         else
                         {
-                            max = Math.Max(max, node.Value.ConsumedTokens);
+                            max = Options.FullErrorReporting ? Math.Max(max, node.Value.ConsumedTokens) : 0;
                         }
                     }
 
