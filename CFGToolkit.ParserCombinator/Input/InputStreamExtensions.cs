@@ -55,10 +55,12 @@ namespace CFGToolkit.ParserCombinator.Input
 
             int n = values.Length;
             var failed = new bool[n];
+            var finished = new bool[n];
             int failedCounter = 0;
+            int finishedCounter = 0;
 
             int j = 0;
-            while (postion < stream.Tokens.Count && failedCounter < n)
+            while (postion < stream.Tokens.Count && failedCounter < n && finishedCounter < n)
             {
                 for (var i = 0; i < n; i++)
                 {
@@ -71,6 +73,12 @@ namespace CFGToolkit.ParserCombinator.Input
                     {
                         failedCounter++;
                         failed[i] = true;
+                    }
+
+                    if (!finished[i] && j >= values[i].Item2.Length)
+                    {
+                        finished[i] = true;
+                        finishedCounter++;
                     }
                 }
                 postion++;
