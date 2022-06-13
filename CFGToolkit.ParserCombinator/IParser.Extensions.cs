@@ -73,7 +73,7 @@ namespace CFGToolkit.ParserCombinator
             if (@string == null) throw new ArgumentNullException(nameof(@string));
 
             string name = "String: " + @string;
-            return new StringParser(name, @string, token);
+            return new StringParser(name, @string, token) { ShouldUpdateGlobalState = Options.StringLevelReporting };
         }
 
         public static IParser<CharToken, List<char>> WhiteSpaces = new WhitespacesParser("Whitespaces");
