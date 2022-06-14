@@ -34,15 +34,6 @@ namespace CFGToolkit.ParserCombinator
                 state = new GlobalState<TToken>();
             }
 
-            if (Options.Cache && state.Cache == null)
-            {
-                state.Cache = new System.Collections.Concurrent.ConcurrentDictionary<long, IUnionResult<TToken>>[tokens.LongCount()];
-                for (var i = 0; i < tokens.LongCount(); i++)
-                {
-                    state.Cache[i] = new System.Collections.Concurrent.ConcurrentDictionary<long, IUnionResult<TToken>>();
-                }
-            }
-
             var inputStream = new InputStream<TToken>(tokens, 0, new Dictionary<string, object>());
 
             var parserCallStack = new ParserCallStack<TToken>(new Frame<TToken>() { Parser = parser, Input = inputStream, TokenSource = token ?? new CancellationTokenSource() });

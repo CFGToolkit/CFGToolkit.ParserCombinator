@@ -1,6 +1,5 @@
 ﻿using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
-using CFGToolkit.ParserCombinator.Values;
 
 namespace CFGToolkit.ParserCombinator.Parsers
 {
@@ -13,25 +12,29 @@ namespace CFGToolkit.ParserCombinator.Parsers
             Name = name;
             _parser = parser;
             Id = id;
+            ShouldUpdateGlobalState = false;
         }
 
         public long Id { get; set; }
 
         protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            if (input.AtEnd)
+            if (globalState.Cache != null)
             {
-                return UnionResultFactory.Failure(this, "Failed to match regex. Unexpected end of input", 0, input.Position);
-            }
+                var val = globalState.Cache[input.Position, Id];
+                if (val != null)
+                {
+                    return val;
+                }
 
-            if (globalState.Cache[input.Position].TryGetValue(Id, out var result))
+                var newResult = _parser.Parse(input, globalState, parserCallStack);
+                globalState.Cache[input.Position, Id] = newResult;
+                return newResult;
+            }
+            else
             {
-                return result;
+                return _parser.Parse(input, globalState, parserCallStack);
             }
-
-            var newResult = _parser.Parse(input, globalState, parserCallStack.Call(_parser, input));
-            globalState.Cache[input.Position].TryAdd(Id, newResult);
-            return newResult;
         }
     }
 }

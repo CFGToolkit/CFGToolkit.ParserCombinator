@@ -20,7 +20,7 @@ namespace CFGToolkit.ParserCombinator.State
 
         public ConcurrentBag<Lazy<List<Frame<TToken>>>> LastFailedCallStacks { get; set; } = new ConcurrentBag<Lazy<List<Frame<TToken>>>>();
 
-        public ConcurrentDictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
+        public IUnionResult<TToken>[,] Cache { get; set; }
 
         public Action<bool> UpdateHandler { get; set; }
 

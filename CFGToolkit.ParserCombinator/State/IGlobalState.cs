@@ -19,6 +19,6 @@ namespace CFGToolkit.ParserCombinator.State
 
         Action<bool> UpdateHandler { get; set; }
 
-        ConcurrentDictionary<long, IUnionResult<TToken>>[] Cache { get; set; }
+        IUnionResult<TToken>[,] Cache { get; set; }
     }
 }
