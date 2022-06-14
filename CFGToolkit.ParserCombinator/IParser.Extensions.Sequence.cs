@@ -5,13 +5,13 @@
     using System.Linq;
     using CFGToolkit.ParserCombinator.Input;
     using CFGToolkit.ParserCombinator.Parsers;
-    using System.Threading;
+    using CFGToolkit.ParserCombinator.Values;
 
     public partial class Parser
     {
-        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(string valueParserName, object value)[], TResult> select, params Lazy<IParser<TToken>>[] parserFactories) where TToken : IToken
+        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<IUnionResultValue<TToken>[], TResult> factory, params Lazy<IParser<TToken>>[] parsers) where TToken : IToken
         {
-            return new SequenceParser<TToken, TResult>(name, select, parserFactories);
+            return new SequenceParser<TToken, TResult>(name, factory, parsers);
         }
 
         public static IParser<TToken, IEnumerable<T>> DelimitedBy<TToken, T, U>(this IParser<TToken, T> parser, IParser<TToken, U> delimiter) where TToken : IToken
