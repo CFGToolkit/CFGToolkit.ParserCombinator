@@ -10,10 +10,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 {
     public class SequenceParser<TToken, TResult> : BaseParser<TToken, TResult> where TToken : IToken
     {
-        private readonly Func<IUnionResultValue<TToken>[], TResult> _factory;
+        private readonly Func<(string, IUnionResultValue<TToken>)[], TResult> _factory;
         private readonly Lazy<IParser<TToken>>[] _parsers;
 
-        public SequenceParser(string name, Func<IUnionResultValue<TToken>[], TResult> valueFactory, params Lazy<IParser<TToken>>[] parsers)
+        public SequenceParser(string name, Func<(string, IUnionResultValue<TToken>)[], TResult> valueFactory, params Lazy<IParser<TToken>>[] parsers)
         {
             Name = name;
 
@@ -35,7 +35,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     {
                         var newValue = new UnionResultValue<TToken>(typeof(TResult));
                         newValue.Reminder = value.Reminder;
-                        newValue.Value = _factory(new[] { value });
+                        newValue.Value = _factory( new[] { (parser.Name, value) });
                         newValue.ConsumedTokens = value.ConsumedTokens;
                         newValue.Position = value.Position;
                         values.Add(newValue);
@@ -121,11 +121,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 var value = new UnionResultValue<TToken>(typeof(TResult));
                 value.Reminder = leaf.Value.Reminder;
 
-                var args = new IUnionResultValue<TToken>[paths.Length];
+                var args = new (string, IUnionResultValue<TToken>)[paths.Length];
 
                 for (var i = 0; i < paths.Length; i++)
                 {
-                    args[i] = paths[i].Value;
+                    args[i] = (parsers[i].Name, paths[i].Value);
                     value.ConsumedTokens += paths[i].Value.ConsumedTokens;
                 }
                 value.Value = _factory(args);
