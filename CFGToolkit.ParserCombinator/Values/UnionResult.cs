@@ -47,7 +47,7 @@ namespace CFGToolkit.ParserCombinator.Values
         {
             get
             {
-                return Values?.Count > 0 && _isSuccessful;
+                return _isSuccessful && Values?.Count > 0;
             }
             set
             {
