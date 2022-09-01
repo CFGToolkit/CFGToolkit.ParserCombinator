@@ -17,7 +17,7 @@ namespace CFGToolkit.ParserCombinator.Values
 
         int GetHashCode();
 
-        object Value { get; }
+        object Value { get; set; }
 
         Type ValueType { get; }
 

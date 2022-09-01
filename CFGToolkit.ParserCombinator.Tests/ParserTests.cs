@@ -195,6 +195,53 @@ parameter_identifier2[no-token] ::= identifier
         }
 
         [Fact]
+        public void MapTest()
+        {
+            var parser = Parser.String("1.0").Map(value =>
+            {
+                return decimal.Parse(value.GetValue<string>(), System.Globalization.CultureInfo.InvariantCulture);
+            });
+
+
+            var result = parser.TryParse("1.0");
+            Assert.True(result.IsSuccessful);
+            Assert.True(result.Values.Count == 1);
+            Assert.False(result.Values[0].EmptyMatch);
+            Assert.Equal(1m, result.Values[0].Value);
+        }
+
+        [Fact]
+        public void MapTest2()
+        {
+            var parser = Parser.Regex(@"\d+").Map(value =>
+            {
+                return value.GetValue<string>().Length;
+            });
+
+
+            var result = parser.TryParse("123456789");
+            Assert.True(result.IsSuccessful);
+            Assert.True(result.Values.Count == 1);
+            Assert.False(result.Values[0].EmptyMatch);
+            Assert.Equal(9, result.Values[0].Value);
+        }
+
+        [Fact]
+        public void MapTest3()
+        {
+            var parser = Parser.Regex(@"\d+", true).Map(value =>
+            {
+                return value.ConsumedTokens;
+            });
+
+            var result = parser.TryParse(" 123456789 ");
+            Assert.True(result.IsSuccessful);
+            Assert.True(result.Values.Count == 1);
+            Assert.False(result.Values[0].EmptyMatch);
+            Assert.Equal(11, result.Values[0].Value);
+        }
+
+        [Fact]
         public void Empty()
         {
             var parser = Parser.String(string.Empty).Tag("t1", "value");

@@ -102,6 +102,14 @@ namespace CFGToolkit.ParserCombinator
             return new ThenFuncParser<TToken, T, U>("Then: " + first.Name + " => func", first, second);
         }
 
+        public static IParser<TToken, U> Map<TToken, T, U>(this IParser<TToken, T> first, Func<Values.IUnionResultValue<TToken>, U> second) where TToken : IToken
+        {
+            if (first == null) throw new ArgumentNullException(nameof(first));
+            if (second == null) throw new ArgumentNullException(nameof(second));
+
+            return new MapParser<TToken, T, U>("Then: " + first.Name + " => func", first, second);
+        }
+
         public static IParser<TToken, List<T>> Many<TToken, T>(this IParser<TToken, T> parser, bool greedy = true) where TToken : IToken
         {
             if (parser == null) throw new ArgumentNullException(nameof(parser));
