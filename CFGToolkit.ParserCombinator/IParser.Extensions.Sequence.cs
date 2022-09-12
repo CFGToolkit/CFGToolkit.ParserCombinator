@@ -9,7 +9,7 @@
 
     public partial class Parser
     {
-        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<(IParser<TToken>, IUnionResultValue<TToken>)[], TResult> factory, params Lazy<IParser<TToken>>[] parsers) where TToken : IToken
+        public static IParser<TToken, TResult> Sequence<TToken, TResult>(string name, Func<IParser<TToken>, (IParser<TToken>, IUnionResultValue<TToken>)[], TResult> factory, params Lazy<IParser<TToken>>[] parsers) where TToken : IToken
         {
             return new SequenceParser<TToken, TResult>(name, factory, parsers);
         }
