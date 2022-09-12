@@ -211,6 +211,22 @@ parameter_identifier2[no-token] ::= identifier
         }
 
         [Fact]
+        public void MapExtTest()
+        {
+            var parser = (Parser.String("1.0").Tag("x", "1")).MapExt((p, value) =>
+            {
+                return decimal.Parse(value.GetValue<string>(), System.Globalization.CultureInfo.InvariantCulture) + int.Parse(p.Tags["x"].ToString());
+            });
+
+
+            var result = parser.TryParse("1.0");
+            Assert.True(result.IsSuccessful);
+            Assert.True(result.Values.Count == 1);
+            Assert.False(result.Values[0].EmptyMatch);
+            Assert.Equal(2m, result.Values[0].Value);
+        }
+
+        [Fact]
         public void MapTest2()
         {
             var parser = Parser.Regex(@"\d+").Map(value =>
