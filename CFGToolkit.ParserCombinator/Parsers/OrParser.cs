@@ -27,8 +27,10 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (firstResult.IsSuccessful && secondResult.IsSuccessful)
             {
-                firstResult.Values.AddRange(secondResult.Values);
-                return UnionResultFactory.Success(this, firstResult);
+                var combined = new List<IUnionResultValue<TToken>>(firstResult.Values.Count + secondResult.Values.Count);
+                combined.AddRange(firstResult.Values);
+                combined.AddRange(secondResult.Values);
+                return UnionResultFactory.Success(this, combined);
             }
             if (firstResult.IsSuccessful)
             {

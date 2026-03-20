@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
@@ -93,13 +92,19 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 result = CollectResultsLazy(nodes);
             }
 
-            if (result.Any())
+            if (result.Count > 0)
             {
                 return UnionResultFactory.Success(this, result);
             }
             else
             {
-                return UnionResultFactory.Failure(this, "Failure", nodes.Count > 0 ? nodes.Max(n => n.Value.ConsumedTokens) : 0, input.Position);
+                int maxConsumed = 0;
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    var consumed = nodes[i].Value.ConsumedTokens;
+                    if (consumed > maxConsumed) maxConsumed = consumed;
+                }
+                return UnionResultFactory.Failure(this, "Failure", maxConsumed, input.Position);
             }
         }
 
@@ -123,20 +128,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         private List<IUnionResultValue<TToken>> CollectResultsLazy(List<TreeNode<TToken>> nodes)
         {
-            IEnumerable<TreeNode<TToken>> filtred;
-            if (_minimumCount.HasValue)
-            {
-                filtred = nodes.Where(item => item.Depth >= _minimumCount.Value);
-            }
-            else
-            {
-                filtred = nodes;
-            }
+            var result = new List<IUnionResultValue<TToken>>();
 
-            var result = new List<IUnionResultValue<TToken>>(filtred.Count());
-
-            foreach (var node in filtred)
+            foreach (var node in nodes)
             {
+                if (_minimumCount.HasValue && node.Depth < _minimumCount.Value)
+                {
+                    continue;
+                }
+
                 var list = new List<TResult>();
                 var @value = new UnionResultValue<TToken>(typeof(List<TResult>))
                 {
@@ -166,22 +166,22 @@ namespace CFGToolkit.ParserCombinator.Parsers
             return result;
         }
 
-        private List<IUnionResultValue<TToken>>  CollectResultsGreedy(List<TreeNode<TToken>> nodes)
+        private List<IUnionResultValue<TToken>> CollectResultsGreedy(List<TreeNode<TToken>> nodes)
         {
-            IEnumerable<TreeNode<TToken>> filtred;
-            if (_minimumCount.HasValue)
-            {
-                filtred = nodes.Where(item => item.IsLeaf && item.Depth >= _minimumCount.Value);
-            }
-            else
-            {
-                filtred = nodes.Where(item => item.IsLeaf);
-            }
+            var result = new List<IUnionResultValue<TToken>>();
 
-            var result = new List<IUnionResultValue<TToken>>(filtred.Count());
-
-            foreach (var leaf in filtred)
+            foreach (var leaf in nodes)
             {
+                if (!leaf.IsLeaf)
+                {
+                    continue;
+                }
+
+                if (_minimumCount.HasValue && leaf.Depth < _minimumCount.Value)
+                {
+                    continue;
+                }
+
                 var list = new List<TResult>();
                 var @value = new UnionResultValue<TToken>(typeof(List<TResult>))
                 {

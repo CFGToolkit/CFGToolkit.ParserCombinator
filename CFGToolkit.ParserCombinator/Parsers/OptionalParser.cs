@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
@@ -27,8 +26,27 @@ namespace CFGToolkit.ParserCombinator.Parsers
             if (results.IsSuccessful)
             {
                 var successValues = results.Values;
-                var optionValues = successValues
-                    .Select(v => (IUnionResultValue<TToken>)new UnionResultValue<TToken>(typeof(IOption<T>))
+                bool hasEmptyMatch = false;
+
+                var result = new List<IUnionResultValue<TToken>>(successValues.Count + 1);
+
+                for (int i = 0; i < successValues.Count; i++)
+                {
+                    if (successValues[i].ConsumedTokens == 0)
+                    {
+                        hasEmptyMatch = true;
+                    }
+                }
+
+                if (!Greedy && !hasEmptyMatch)
+                {
+                    result.Add(new UnionResultValue<TToken>(typeof(IOption<T>)) { Value = new None<T>(), Reminder = input, Position = input.Position, ConsumedTokens = 0, IsSuccessful = true });
+                }
+
+                for (int i = 0; i < successValues.Count; i++)
+                {
+                    var v = successValues[i];
+                    result.Add(new UnionResultValue<TToken>(typeof(IOption<T>))
                     {
                         Value = new Some<T>((T)v.Value),
                         Position = v.Position,
@@ -36,14 +54,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         Reminder = v.Reminder,
                         IsSuccessful = true
                     });
-
-                var result = new List<IUnionResultValue<TToken>>(optionValues.Count());
-
-                if (!Greedy && !successValues.Any(item => item.ConsumedTokens == 0))
-                {
-                    result.Add(new UnionResultValue<TToken>(typeof(IOption<T>)) { Value = new None<T>(), Reminder = input, Position = input.Position, ConsumedTokens = 0, IsSuccessful = true });
                 }
-                result.AddRange(optionValues);
 
                 return UnionResultFactory.Success(this, result);
             }

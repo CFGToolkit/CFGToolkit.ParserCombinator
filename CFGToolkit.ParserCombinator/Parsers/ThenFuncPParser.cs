@@ -32,7 +32,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     secondParser = _second(item.GetValue<T>());
 
-                    var tmp = secondParser.Parse(item.Reminder, globalState, parserCallStack);
+                    var tmp = secondParser.Parse(item.Reminder, globalState, parserCallStack.Call(secondParser, item.Reminder));
 
                     if (tmp.IsSuccessful)
                     {

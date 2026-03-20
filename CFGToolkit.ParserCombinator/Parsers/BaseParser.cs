@@ -67,17 +67,12 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     {
                         return UnionResultFactory.Failure(this, "Cancelled", 0, input.Position);
                     }
-                };
-
-                if (beforeArgs.Skip)
-                {
-                    return UnionResultFactory.Failure(this, "Cancelled", 0, input.Position);
                 }
             }
 
             var result = ParseInternal(input, globalState, parserCallStack);
 
-            if (AfterParse?.Count > 0 || ShouldUpdateGlobalState)
+            if (AfterParse?.Count > 0)
             {
                 var afterArgs = new AfterParseArgs<TToken>()
                 {
@@ -86,18 +81,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     Input = input,
                     ParserCallStack = parserCallStack,
                 };
-                if (AfterParse != null)
+                foreach (var action in AfterParse)
                 {
-                    foreach (var action in AfterParse)
-                    {
-                        action(afterArgs);
-                    };
+                    action(afterArgs);
                 }
+            }
 
-                if (ShouldUpdateGlobalState)
-                {
-                    UpdateGlobalState(afterArgs);
-                }
+            if (ShouldUpdateGlobalState)
+            {
+                UpdateGlobalState(result, globalState, input, parserCallStack);
             }
 
 
@@ -112,48 +104,47 @@ namespace CFGToolkit.ParserCombinator.Parsers
             return result;
         }
 
-        private void UpdateGlobalState(AfterParseArgs<TToken> args)
+        private void UpdateGlobalState(IUnionResult<TToken> parserResult, IGlobalState<TToken> globalState, IInputStream<TToken> input, IParserCallStack<TToken> parserCallStack)
         {
-            var consumed = args.ParserResult.MaxConsumed;
-            var consumedPosition = args.Input.Position + (consumed > 0 ? consumed - 1 : 0);
-            if (args.ParserResult.IsSuccessful)
+            var consumed = parserResult.MaxConsumed;
+            var consumedPosition = input.Position + (consumed > 0 ? consumed - 1 : 0);
+            if (parserResult.IsSuccessful)
             {
-                if (consumedPosition > args.GlobalState.LastConsumedPosition)
+                if (consumedPosition > globalState.LastConsumedPosition)
                 {
-                    args.GlobalState.LastConsumedPosition = consumedPosition;
+                    globalState.LastConsumedPosition = consumedPosition;
                     if (Options.FullErrorReporting)
                     {
-                        args.GlobalState.LastConsumedCallStack = args.ParserCallStack.FullStack;
+                        globalState.LastConsumedCallStack = parserCallStack.FullStack;
                     }
                 }
             }
             else
             {
-                if (consumedPosition == args.GlobalState.LastFailedPosition)
+                if (consumedPosition == globalState.LastFailedPosition)
                 {
                     if (Options.FullErrorReporting)
                     {
-                        args.GlobalState.LastFailedCallStacks.Add(args.ParserCallStack.FullStack);
+                        globalState.LastFailedCallStacks.Add(parserCallStack.FullStack);
                     }
-
                 }
-                else if (consumedPosition > args.GlobalState.LastFailedPosition)
+                else if (consumedPosition > globalState.LastFailedPosition)
                 {
-                    args.GlobalState.LastFailedPosition = consumedPosition;
+                    globalState.LastFailedPosition = consumedPosition;
 
                     if (Options.FullErrorReporting)
                     {
-                        args.GlobalState.LastFailedCallStacks.Clear();
-                        args.GlobalState.LastFailedCallStacks.Add(args.ParserCallStack.FullStack);
+                        globalState.LastFailedCallStacks.Clear();
+                        globalState.LastFailedCallStacks.Add(parserCallStack.FullStack);
                     }
                 }
             }
 
-            if (args.GlobalState.UpdateHandler != null)
+            if (globalState.UpdateHandler != null)
             {
-                args.GlobalState.UpdateHandler(args.ParserResult.IsSuccessful);
+                globalState.UpdateHandler(parserResult.IsSuccessful);
             }
-            args.ParserCallStack.Top.Result = args.ParserResult;
+            parserCallStack.Top.Result = parserResult;
         }
     }
 }

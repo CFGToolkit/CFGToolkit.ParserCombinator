@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.Parsers.Graphs;
 using CFGToolkit.ParserCombinator.State;
@@ -50,13 +49,15 @@ namespace CFGToolkit.ParserCombinator.Parsers
             }
 
             var parsers = new IParser<TToken>[_parsers.Length];
-            var nodes = new List<TreeNode<TToken>>[_parsers.Length];
+
+            // Only keep the current level of tree nodes; previous levels are
+            // still reachable via Parent pointers for path reconstruction.
+            List<TreeNode<TToken>> currentNodes = null;
 
             for (var i = 0; i < _parsers.Length; i++)
             {
                 var parser = _parsers[i].Value;
                 parsers[i] = parser;
-                
 
                 if (i == 0)
                 {
@@ -68,19 +69,19 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                     else
                     {
-                        nodes[0] = new List<TreeNode<TToken>>(result.Values.Count);
+                        currentNodes = new List<TreeNode<TToken>>(result.Values.Count);
                         foreach (IUnionResultValue<TToken> item in result.Values)
                         {
-                            nodes[0].Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item, IsSuccess = true });
+                            currentNodes.Add(new TreeNode<TToken>() { Depth = 0, Parent = null, Value = item, IsSuccess = true });
                         }
                     }
                 }
                 else
                 {
-                    nodes[i] = new List<TreeNode<TToken>>();
+                    var nextNodes = new List<TreeNode<TToken>>();
 
                     int max = 0;
-                    foreach (var node in nodes[i - 1])
+                    foreach (var node in currentNodes)
                     {
                         if (node.IsSuccess)
                         {
@@ -90,7 +91,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                             {
                                 foreach (IUnionResultValue<TToken> secondItem in tmp.Values)
                                 {
-                                    nodes[i].Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem, IsSuccess = true });
+                                    nextNodes.Add(new TreeNode<TToken>() { Depth = i, Parent = node, Value = secondItem, IsSuccess = true });
                                 }
                             }
                         }
@@ -100,15 +101,17 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         }
                     }
 
-                    if (nodes[i] == null || !nodes[i].Any())
+                    if (nextNodes.Count == 0)
                     {
                         return UnionResultFactory.Failure(this, "Parser failed", max, input.Position);
                     }
+
+                    currentNodes = nextNodes;
                 }
             }
 
-            var resultValues = new List<IUnionResultValue<TToken>>(nodes[parsers.Length - 1].Count);
-            foreach (var leaf in nodes[parsers.Length - 1])
+            var resultValues = new List<IUnionResultValue<TToken>>(currentNodes.Count);
+            foreach (var leaf in currentNodes)
             {
                 var paths = new TreeNode<TToken>[parsers.Length];
                 paths[paths.Length - 1] = leaf;

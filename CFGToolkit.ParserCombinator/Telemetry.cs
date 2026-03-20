@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 
 namespace CFGToolkit.ParserCombinator
 {
     public class Telemetry
     {
         public static Dictionary<string, long> ParserTotalCalls = new Dictionary<string, long>();
-        
+
         public static Dictionary<string, long> ParserTotalTime = new Dictionary<string, long>();
 
         public static void IncreaseCall(string parser)
@@ -16,11 +16,14 @@ namespace CFGToolkit.ParserCombinator
             {
                 parser = "-";
             }
-            if (!ParserTotalCalls.ContainsKey(parser))
+            if (ParserTotalCalls.TryGetValue(parser, out var count))
             {
-                ParserTotalCalls[parser] = 0;
+                ParserTotalCalls[parser] = count + 1;
             }
-            ParserTotalCalls[parser]++;
+            else
+            {
+                ParserTotalCalls[parser] = 1;
+            }
         }
 
         public static void IncreaseTime(string parser, long ms)
@@ -30,31 +33,60 @@ namespace CFGToolkit.ParserCombinator
                 parser = "-";
             }
 
-            if (!ParserTotalTime.ContainsKey(parser))
+            if (ParserTotalTime.TryGetValue(parser, out var time))
             {
-                ParserTotalTime[parser] = 0;
+                ParserTotalTime[parser] = time + ms;
             }
-            ParserTotalTime[parser] += ms;
+            else
+            {
+                ParserTotalTime[parser] = ms;
+            }
         }
 
         public static string ExportTime()
         {
-            return string.Join(Environment.NewLine, ParserTotalTime.OrderByDescending(v => v.Value).Select(v => v.Key + ";" + v.Value).ToArray());
+            return ExportDictionary(ParserTotalTime);
         }
+
         public static string ExportAvg()
         {
-            var avg = new Dictionary<string, double>();
-            foreach (var p in ParserTotalCalls.Keys)
+            var avg = new List<KeyValuePair<string, double>>(ParserTotalCalls.Count);
+            foreach (var kvp in ParserTotalCalls)
             {
-                avg[p] = (double)ParserTotalTime[p] / (double)ParserTotalCalls[p];
+                if (ParserTotalTime.TryGetValue(kvp.Key, out var time))
+                {
+                    avg.Add(new KeyValuePair<string, double>(kvp.Key, (double)time / kvp.Value));
+                }
             }
 
-            return string.Join(Environment.NewLine, avg.OrderByDescending(v => v.Value).Select(v => v.Key + ";" + v.Value).ToArray());
+            avg.Sort((a, b) => b.Value.CompareTo(a.Value));
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < avg.Count; i++)
+            {
+                if (i > 0) sb.Append(Environment.NewLine);
+                sb.Append(avg[i].Key).Append(';').Append(avg[i].Value);
+            }
+            return sb.ToString();
         }
 
         public static string ExportCalls()
         {
-            return string.Join(Environment.NewLine, ParserTotalCalls.OrderByDescending(v => v.Value).Select(v => v.Key + ";" + v.Value).ToArray());
+            return ExportDictionary(ParserTotalCalls);
+        }
+
+        private static string ExportDictionary(Dictionary<string, long> dict)
+        {
+            var sorted = new List<KeyValuePair<string, long>>(dict);
+            sorted.Sort((a, b) => b.Value.CompareTo(a.Value));
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                if (i > 0) sb.Append(Environment.NewLine);
+                sb.Append(sorted[i].Key).Append(';').Append(sorted[i].Value);
+            }
+            return sb.ToString();
         }
     }
 }
