@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CFGToolkit.ParserCombinator;
+﻿using CFGToolkit.ParserCombinator;
 
 namespace CFGToolkit.ParserCombinator.Input
 {
@@ -8,17 +6,27 @@ namespace CFGToolkit.ParserCombinator.Input
     {
         public static string GetText(this IInputStream<CharToken> stream)
         {
-            if (!stream.Attributes.ContainsKey("txt"))
+            if (stream.Attributes.TryGetValue("txt", out var cached))
             {
-                stream.Attributes["txt"] = string.Join(string.Empty, stream.Tokens.Select(t => t.Value));
+                return (string)cached;
             }
 
-            return stream.Attributes["txt"].ToString();
+            var tokens = stream.Tokens;
+            var chars = new char[tokens.Count];
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                chars[i] = tokens[i].Value;
+            }
+            var text = new string(chars);
+            stream.Attributes["txt"] = text;
+            return text;
         }
 
         public static string GetReminder(this IInputStream<CharToken> stream, int? position)
         {
-            return string.Join(string.Empty, stream.Tokens.Skip(position ?? stream.Position).Select(t => t.Value));
+            var text = stream.GetText();
+            var pos = position ?? stream.Position;
+            return text.Substring(pos);
         }
 
         public static bool StartsWith(this IInputStream<CharToken> stream, string value)

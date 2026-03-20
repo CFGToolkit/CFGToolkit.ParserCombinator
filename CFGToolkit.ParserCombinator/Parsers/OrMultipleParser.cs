@@ -26,7 +26,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 {
                     if (fullResults == null)
                     {
-                        fullResults = result.Values;
+                        fullResults = new List<IUnionResultValue<TToken>>(result.Values);
                     }
                     else
                     {

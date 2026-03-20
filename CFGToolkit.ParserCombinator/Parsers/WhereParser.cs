@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Linq;
-using CFGToolkit.ParserCombinator;
+using System.Collections.Generic;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 using CFGToolkit.ParserCombinator.Values;
@@ -25,11 +24,18 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
             if (result.IsSuccessful)
             {
-                var filteredValues = result.Values.Where(i => _predicate(i.GetValue<TResult>()));
-
-                if (filteredValues.Any())
+                var filteredValues = new List<IUnionResultValue<TToken>>();
+                foreach (var item in result.Values)
                 {
-                    return UnionResultFactory.Success(this, filteredValues.ToList());
+                    if (_predicate(item.GetValue<TResult>()))
+                    {
+                        filteredValues.Add(item);
+                    }
+                }
+
+                if (filteredValues.Count > 0)
+                {
+                    return UnionResultFactory.Success(this, filteredValues);
                 }
 
                 return UnionResultFactory.Failure(this, "Parser failed", result.MaxConsumed, input.Position);
