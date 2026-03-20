@@ -21,7 +21,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
 
         protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
-            var firstResult = _first.Parse(input, globalState, parserCallStack);
+            var firstResult = _first.Parse(input, globalState, parserCallStack.Call(_first, input));
 
             if (firstResult.IsSuccessful)
             {

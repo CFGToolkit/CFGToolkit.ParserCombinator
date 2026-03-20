@@ -19,6 +19,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
         protected override IUnionResult<TToken> ParseInternal(IInputStream<TToken> input, IGlobalState<TToken> globalState, IParserCallStack<TToken> parserCallStack)
         {
             List<IUnionResultValue<TToken>> fullResults = null;
+            int maxConsumed = 0;
             foreach (var parser in _parsers)
             {
                 var result = parser.Parse(input, globalState, parserCallStack.Call(parser, input));
@@ -33,6 +34,11 @@ namespace CFGToolkit.ParserCombinator.Parsers
                         fullResults.AddRange(result.Values);
                     }
                 }
+
+                if (Options.FullErrorReporting)
+                {
+                    maxConsumed = System.Math.Max(maxConsumed, result.MaxConsumed);
+                }
             }
 
             if (fullResults != null)
@@ -40,7 +46,7 @@ namespace CFGToolkit.ParserCombinator.Parsers
                 return UnionResultFactory.Success(this, fullResults);
             }
 
-            return UnionResultFactory.Failure(this, "Parser failed", 0, input.Position);
+            return UnionResultFactory.Failure(this, "Parser failed", maxConsumed, input.Position);
         }
     }
 }

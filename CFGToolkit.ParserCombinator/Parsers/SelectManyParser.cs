@@ -46,7 +46,14 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                 }
 
-                return UnionResultFactory.Success<TToken, V>(this, values);
+                if (values.Count > 0)
+                {
+                    return UnionResultFactory.Success<TToken, V>(this, values);
+                }
+                else
+                {
+                    return UnionResultFactory.Failure<TToken, V>(this, $"Parser failed in {Name} parser.", firstResult.MaxConsumed, input.Position);
+                }
             }
             else
             {
