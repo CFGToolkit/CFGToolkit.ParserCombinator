@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CFGToolkit.ParserCombinator.Input;
 using CFGToolkit.ParserCombinator.State;
 
@@ -69,7 +68,16 @@ namespace CFGToolkit.ParserCombinator.Values
 
                 if (_maxConsumed == null)
                 {
-                    _maxConsumed = Values != null && Values.Count > 0 ? Values.Max(v => v.ConsumedTokens) : 0;
+                    int max = 0;
+                    if (Values != null)
+                    {
+                        for (int i = 0; i < Values.Count; i++)
+                        {
+                            var consumed = Values[i].ConsumedTokens;
+                            if (consumed > max) max = consumed;
+                        }
+                    }
+                    _maxConsumed = max;
                 }
                 return _maxConsumed.Value;
             }
