@@ -84,7 +84,6 @@ namespace CFGToolkit.ParserCombinator.Parsers
                     }
                 }
 
-                return UnionResultFactory.Failure(this, "Parser failed (first mode)", 0, input.Position);
             }
 
             int max = 0;
